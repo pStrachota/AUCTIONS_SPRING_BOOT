@@ -14,6 +14,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import service.converter.AuctionTypeConverter;
+import service.converter.ItemCategoryConverter;
+import service.converter.ItemStatusConverter;
 
 @Entity
 @Getter
@@ -36,10 +39,13 @@ public class Auction {
 
     private BigDecimal startingPrice;
 
+    @Convert(converter = AuctionTypeConverter.class)
     private AuctionType auctionType;
 
+    @Convert(converter = ItemStatusConverter.class)
     private ItemStatus itemStatus;
 
+    @Convert(converter = ItemCategoryConverter.class)
     private ItemCategory itemCategory;
 
     private LocalDateTime auctionEndTime;
