@@ -11,16 +11,16 @@ public interface AuctionService {
 
     Auction createAuction(AuctionRequest auctionRequest);
 
-    List<Auction> getAllAuctions();
+    List<Auction> getAllAuctions(int pageNo, String sortBy, String sortDir);
 
     Auction deleteAuction(Long id);
 
     Auction updateAuction(Long id, AuctionUpdate auctionUpdate);
 
-    List<Auction> findByDescriptionContains(String description);
+    List<Auction> findByDescriptionContains(String description, int page);
 
-    List<Auction> findByItemCategory(ItemCategory itemCategory);
+    List<Auction> findByItemCategory(ItemCategory itemCategory, int page);
 
-    List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice);
+    List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, int page, String sortDir);
 }
 

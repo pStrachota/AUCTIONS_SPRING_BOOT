@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
 
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
-    List<Auction> findByItemCategory(ItemCategory itemCategory);
-    List<Auction> findByDescriptionContains(String description);
-    List<Auction> findAllByCurrentPriceBetween(BigDecimal minPrice, BigDecimal maxPrice);
+    List<Auction> findByItemCategory(ItemCategory itemCategory, Pageable pageable);
+    List<Auction> findByDescriptionContains(String description, Pageable pageable);
+    List<Auction> findAllByCurrentPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 }

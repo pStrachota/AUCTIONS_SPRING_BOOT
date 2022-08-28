@@ -1,15 +1,19 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import org.springframework.stereotype.Service;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
@@ -19,6 +23,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionD
 @RequiredArgsConstructor
 public class AuctionServiceImpl implements AuctionService {
 
+    private static final int PAGE_SIZE = 20;
     private final AuctionRepository auctionRepository;
 
     public Auction createAuction(AuctionRequest auctionRequest) {
@@ -42,8 +47,14 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> getAllAuctions() {
-        return auctionRepository.findAll();
+    public List<Auction> getAllAuctions(int pageNo, String sortBy,
+                                        String sortDir) {
+        Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, sortDir.equalsIgnoreCase(
+                Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending());
+        Page<Auction> auctions = auctionRepository.findAll(pageable);
+
+        return auctions.getContent();
     }
 
     @Override
@@ -72,18 +83,24 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> findByDescriptionContains(String description) {
-        return auctionRepository.findByDescriptionContains(description);
+    public List<Auction> findByDescriptionContains(String description, int page) {
+        return auctionRepository
+                .findByDescriptionContains(description, PageRequest.of(page, PAGE_SIZE));
     }
 
     @Override
-    public List<Auction> findByItemCategory(ItemCategory itemCategory) {
-        return auctionRepository.findByItemCategory(itemCategory);
+    public List<Auction> findByItemCategory(ItemCategory itemCategory, int page) {
+        return auctionRepository
+                .findByItemCategory(itemCategory, PageRequest.of(page, PAGE_SIZE));
     }
 
     @Override
-    public List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice) {
-        return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice);
+    public List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, int page,
+                                            String sortDir) {
+        return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice,
+                PageRequest.of(page, PAGE_SIZE, sortDir.equalsIgnoreCase(
+                        Sort.Direction.ASC.name()) ? Sort.by("price").ascending() :
+                        Sort.by("price").descending()));
     }
 
 }
