@@ -2,6 +2,7 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,8 @@ public class AuctionController {
     private final AuctionService auctionService;
 
     @PostMapping("/auctions")
-    public ResponseEntity<Auction> createAuction(@RequestBody AuctionRequest auctionRequest) {
+    public ResponseEntity<Auction> createAuction(
+            @RequestBody @Valid AuctionRequest auctionRequest) {
         return new ResponseEntity<Auction>(auctionService.createAuction(auctionRequest),
                 HttpStatus.CREATED);
     }
@@ -70,7 +72,7 @@ public class AuctionController {
     }
 
     @PutMapping("/auctions/{id}")
-    public ResponseEntity<Auction> updateAuction(@RequestBody AuctionUpdate auctionUpdate,
+    public ResponseEntity<Auction> updateAuction(@RequestBody @Valid AuctionUpdate auctionUpdate,
                                                  @RequestParam Long id) {
         return new ResponseEntity<Auction>(auctionService.updateAuction(id, auctionUpdate),
                 HttpStatus.OK);
