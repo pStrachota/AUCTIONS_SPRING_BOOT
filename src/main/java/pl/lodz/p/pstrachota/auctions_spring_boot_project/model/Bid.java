@@ -1,4 +1,4 @@
-package model;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

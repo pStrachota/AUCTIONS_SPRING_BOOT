@@ -1,8 +1,8 @@
-package service.converter;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import model.AuctionType;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
 
 @Converter
 public class AuctionTypeConverter implements AttributeConverter<AuctionType, String> {

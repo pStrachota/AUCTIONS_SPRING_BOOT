@@ -1,4 +1,4 @@
-package model;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
 
 
 import java.math.BigDecimal;
@@ -14,9 +14,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import service.converter.AuctionTypeConverter;
-import service.converter.ItemCategoryConverter;
-import service.converter.ItemStatusConverter;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.AuctionTypeConverter;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.ItemCategoryConverter;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.ItemStatusConverter;
 
 @Entity
 @Getter

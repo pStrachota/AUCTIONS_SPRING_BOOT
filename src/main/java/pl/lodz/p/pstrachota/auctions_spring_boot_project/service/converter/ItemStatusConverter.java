@@ -1,8 +1,8 @@
-package service.converter;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import model.ItemStatus;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
 
 @Converter
 public class ItemStatusConverter implements AttributeConverter<ItemStatus, String> {
