@@ -1,29 +1,29 @@
-INSERT INTO Auction (id, email, description, starting_price, current_price, auction_type, item_Status, item_Category,
+INSERT INTO Auction (email, description, starting_price, current_price, auction_type, item_Status, item_Category,
                      auction_start_time, auction_End_Time)
-VALUES (1, 'first@mail.com', 'Game of Thrones first book', '20', '20', 'BIDDING', 'NEW', 'BOOK', CURRENT_TIMESTAMP,
+VALUES ('first@mail.com', 'Game of Thrones first book', '20', '20', 'BIDDING', 'NEW', 'BOOK', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
-INSERT INTO Auction (id, email, description, starting_price, current_price, auction_type, item_Status, item_Category,
+INSERT INTO Auction (email, description, starting_price, current_price, auction_type, item_Status, item_Category,
                      auction_start_time, auction_End_Time)
-VALUES (2, 'second@mail.com', 'Mens jeans size L', '40.5', '40.5', 'BUY_NOW', 'USED', 'CLOTHES', CURRENT_TIMESTAMP,
+VALUES ('second@mail.com', 'Mens jeans size L', '40.5', '40.5', 'BUY_NOW', 'USED', 'CLOTHES', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + INTERVAL '7' DAY);
 
-INSERT INTO Auction (id, email, description, starting_price, current_price, auction_type, item_Status, item_Category,
+INSERT INTO Auction (email, description, starting_price, current_price, auction_type, item_Status, item_Category,
                      auction_start_time, auction_End_Time)
-VALUES (3, 'third@mail.com', 'iPhone 5s', '140', '140', 'BIDDING', 'USED', 'ELECTRONICS', CURRENT_TIMESTAMP,
+VALUES ('third@mail.com', 'iPhone 5s', '140', '140', 'BIDDING', 'USED', 'ELECTRONICS', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + INTERVAL '13' DAY);
 
-INSERT INTO Auction (id, email, description, starting_price, current_price, auction_type, item_Status, item_Category,
+INSERT INTO Auction (email, description, starting_price, current_price, auction_type, item_Status, item_Category,
                      auction_start_time, auction_End_Time)
-VALUES (4, 'fourth@mail.com', 'cupboard', '20', '20', 'BIDDING', 'NEW', 'FURNITURE', CURRENT_TIMESTAMP,
+VALUES ('fourth@mail.com', 'cupboard', '20', '20', 'BIDDING', 'NEW', 'FURNITURE', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + INTERVAL '14' DAY);
 
-INSERT INTO Auction (id, email, description, starting_price, current_price, auction_type, item_Status, item_Category,
+INSERT INTO Auction (email, description, starting_price, current_price, auction_type, item_Status, item_Category,
                      auction_start_time, auction_End_Time)
-VALUES (5, 'fifth@mail.com', '20kg dumbell', '20', '20', 'BUY_NOW', 'NEW', 'OTHER', CURRENT_TIMESTAMP,
+VALUES ('fifth@mail.com', '20kg dumbell', '20', '20', 'BUY_NOW', 'NEW', 'OTHER', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + INTERVAL '27' DAY);
 
-INSERT INTO Auction (id, email, description, starting_price, current_price, auction_type, item_Status, item_Category,
+INSERT INTO Auction (email, description, starting_price, current_price, auction_type, item_Status, item_Category,
                      auction_start_time, auction_End_Time)
-VALUES (6, 'sixth@mail.com', 'Little woman', '20', '20', 'BUY_NOW', 'USED', 'BOOK', CURRENT_TIMESTAMP,
+VALUES ('sixth@mail.com', 'Little woman', '20', '20', 'BUY_NOW', 'USED', 'BOOK', CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP + INTERVAL '19' DAY);

@@ -1,16 +1,13 @@
-package model;
-
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,29 +18,18 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Auction {
+public class Bid {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private long relatedOfferId;
+
     private String email;
 
-    private String description;
+    private BigDecimal bidPrice;
 
-    private BigDecimal currentPrice;
-
-    private BigDecimal startingPrice;
-
-    private AuctionType auctionType;
-
-    private ItemStatus itemStatus;
-
-    private ItemCategory itemCategory;
-
-    private LocalDateTime auctionEndTime;
-
-    private LocalDateTime auctionStartTime;
+    private LocalDateTime bidTime;
 
 }
