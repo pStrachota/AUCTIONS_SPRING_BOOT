@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionDtoMapper;
@@ -68,6 +69,21 @@ public class AuctionServiceImpl implements AuctionService {
         Optional.ofNullable(auctionUpdate.getEmail()).ifPresent(auctionToUpdate::setEmail);
 
         return auctionRepository.save(auctionToUpdate);
+    }
+
+    @Override
+    public List<Auction> findByDescriptionContains(String description) {
+        return auctionRepository.findByDescriptionContains(description);
+    }
+
+    @Override
+    public List<Auction> findByItemCategory(ItemCategory itemCategory) {
+        return auctionRepository.findByItemCategory(itemCategory);
+    }
+
+    @Override
+    public List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice) {
+        return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice);
     }
 
 }
