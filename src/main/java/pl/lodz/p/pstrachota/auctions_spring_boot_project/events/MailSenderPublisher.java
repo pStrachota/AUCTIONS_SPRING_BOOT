@@ -15,4 +15,7 @@ public class MailSenderPublisher {
     public void publishNewBid(List<String> emails, long offerId, BigDecimal bidPrice) {
         applicationEventPublisher.publishEvent(new MailNewBidEvent(emails, offerId, bidPrice));
     }
+    public void publishDeletedBid(List<String> emails, long offerId, BigDecimal bidPrice) {
+        applicationEventPublisher.publishEvent(new MailDeletedBidEvent(emails, offerId, bidPrice));
+    }
 }

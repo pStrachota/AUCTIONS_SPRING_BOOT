@@ -80,7 +80,6 @@ public class BidServiceImpl implements BidService {
 
         if (bidsForGivenOffer.size() == 1) {
             auctionToChangePrice.setCurrentPrice(auctionToChangePrice.getStartingPrice());
-//            auctionRepository.save(auction);
         } else {
             auctionToChangePrice.setCurrentPrice(highestPriceBid.getBidPrice());
         }
@@ -88,6 +87,7 @@ public class BidServiceImpl implements BidService {
         List<String> emailBids =
                 bidsForGivenOffer.stream().map(Bid::getEmail).collect(Collectors.toList());
 
+        mailSenderPublisher.publishDeletedBid(emailBids, auctionId, highestPriceBid.getBidPrice());
         bidRepository.delete(bidToDelete);
         return bidToDelete;
     }

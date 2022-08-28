@@ -17,6 +17,13 @@ public class MailSenderListener {
                 .sendEmail(email, "New bid!", "New bid for offer id: " + event.getOfferId() +
                         "\nNow the price is: " + event.getBidPrice()));
     }
+    @EventListener
+    public void handle(MailDeletedBidEvent event) {
+        event.getEmails().forEach(email -> emailSenderServiceImpl
+                .sendEmail(email, "Current highest bid was deleted!",
+                        "Returning to second highest bid for offer id: " + event.getOfferId() +
+                                "\nNow the price is back to: " + event.getBidPrice()));
+    }
 
 }
 
