@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.events.MailSenderPublisher;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bid;
@@ -22,6 +23,7 @@ public class BidServiceImpl implements BidService {
 
     private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
+    private final MailSenderPublisher mailSenderPublisher;
 
     public Bid createBid(BidRequest bidRequest, Long auctionId) {
         Bid bid = BidDtoMapper.mapToBid(bidRequest, auctionId);
@@ -52,6 +54,7 @@ public class BidServiceImpl implements BidService {
         List<Bid> bidsForGivenOffer = bidRepository.findByRelatedOfferId(relatedOfferId);
         List<String> emailBids =
                 bidsForGivenOffer.stream().map(Bid::getEmail).collect(Collectors.toList());
+        mailSenderPublisher.publishNewBid(emailBids, relatedOfferId, bid.getBidPrice());
         return savedBid;
     }
 
