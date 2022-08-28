@@ -24,6 +24,6 @@ public class AuctionRequest {
 
     private ItemCategory itemCategory;
 
-    private LocalDateTime auctionEndTime;
+    private int daysToEndTime;
 
 }
