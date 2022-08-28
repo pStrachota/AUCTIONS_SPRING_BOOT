@@ -68,7 +68,7 @@ public class AuctionController {
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false)
                     String sortDir) {
         return new ResponseEntity<>(
-                auctionService.getAllAuctions(pageNo, sortBy, sortBy), HttpStatus.OK);
+                auctionService.getAllAuctions(pageNo, sortBy, sortDir), HttpStatus.OK);
     }
 
     @PutMapping("/auctions/{id}")

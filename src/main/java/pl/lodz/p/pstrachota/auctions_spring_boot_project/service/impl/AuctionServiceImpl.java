@@ -109,7 +109,7 @@ public class AuctionServiceImpl implements AuctionService {
                                             String sortDir) {
         return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice,
                 PageRequest.of(page, PAGE_SIZE, sortDir.equalsIgnoreCase(
-                        Sort.Direction.ASC.name()) ? Sort.by("price").ascending() :
+                        Sort.Direction.ASC.name()) ? Sort.by("currentPrice").ascending() :
                         Sort.by("price").descending()));
     }
 
