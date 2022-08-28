@@ -43,7 +43,7 @@ public class DataForTests {
 
     public static AuctionRequest testAuctionRequestIncorrectEndTime2 = AuctionRequest.builder()
             .email("sample@mail.com")
-            .daysToEndTime(7)
+            .daysToEndTime(0)
             .description("Sample description")
             .itemCategory(ItemCategory.OTHER)
             .itemStatus(ItemStatus.NEW)
