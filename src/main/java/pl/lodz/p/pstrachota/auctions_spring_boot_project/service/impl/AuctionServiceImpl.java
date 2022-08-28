@@ -13,9 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOperationException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionDtoMapper;
 
@@ -25,22 +30,23 @@ public class AuctionServiceImpl implements AuctionService {
 
     private static final int PAGE_SIZE = 20;
     private final AuctionRepository auctionRepository;
+    private final BidRepository bidRepository;
 
     public Auction createAuction(AuctionRequest auctionRequest) {
 
         Auction auction = AuctionDtoMapper.mapAuctionRequestToAuction(auctionRequest);
 
         if (auction.getAuctionEndTime().isBefore(LocalDateTime.now())) {
-            throw new InvalidParameterException("Auction end time cannot be in the past");
+            throw new IncorrectDateException("Auction end time cannot be in the past");
         }
 
         if (auction.getAuctionEndTime().minusDays(1).compareTo(auction.getAuctionStartTime()) < 0) {
-            throw new InvalidParameterException(
+            throw new IncorrectDateException(
                     "Auction end time must be at least one day after start time");
         }
 
         if (auction.getCurrentPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidParameterException("Min price cannot be negative");
+            throw new IncorrectPriceException("Min price cannot be negative");
         }
 
         return auctionRepository.save(auction);
@@ -60,12 +66,16 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public Auction deleteAuction(Long id) {
         Auction auctionToDelete = auctionRepository.findById(id).orElseThrow(
-                () -> new InvalidParameterException("Offer with id " + id + " not found"));
+                () -> new NotFoundException("Offer with id " + id + " not found"));
 
         if (auctionToDelete.getAuctionEndTime().isBefore(LocalDateTime.now())) {
-            throw new InvalidParameterException("Cannot delete auction that has already ended");
+            throw new IncorrectDateException("Cannot delete auction that has already ended");
         }
+        long bidsForAuctionCount = bidRepository.findByRelatedOfferId(id).size();
 
+        if (bidsForAuctionCount != 0) {
+            throw new IncorrectOperationException("Cannot delete auction with bids");
+        }
         auctionRepository.deleteById(id);
         return auctionToDelete;
     }
@@ -73,7 +83,7 @@ public class AuctionServiceImpl implements AuctionService {
     @Override
     public Auction updateAuction(Long id, AuctionUpdate auctionUpdate) {
         Auction auctionToUpdate = auctionRepository.findById(id).orElseThrow(
-                () -> new InvalidParameterException("Auction with id " + id + " not found"));
+                () -> new NotFoundException("Auction with id " + id + " not found"));
 
         Optional.ofNullable(auctionUpdate.getDescription())
                 .ifPresent(auctionToUpdate::setDescription);
@@ -99,7 +109,7 @@ public class AuctionServiceImpl implements AuctionService {
                                             String sortDir) {
         return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice,
                 PageRequest.of(page, PAGE_SIZE, sortDir.equalsIgnoreCase(
-                        Sort.Direction.ASC.name()) ? Sort.by("price").ascending() :
+                        Sort.Direction.ASC.name()) ? Sort.by("currentPrice").ascending() :
                         Sort.by("price").descending()));
     }
 

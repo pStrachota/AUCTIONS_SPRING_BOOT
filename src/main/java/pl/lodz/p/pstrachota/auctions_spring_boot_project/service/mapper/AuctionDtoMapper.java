@@ -12,7 +12,7 @@ public class AuctionDtoMapper {
     public static Auction mapAuctionRequestToAuction(AuctionRequest auctionRequest) {
         return Auction.builder()
                 .email(auctionRequest.getEmail())
-                .auctionEndTime(auctionRequest.getAuctionEndTime())
+                .auctionEndTime(LocalDateTime.now().plusDays(auctionRequest.getDaysToEndTime()))
                 .description(auctionRequest.getDescription())
                 .itemCategory(auctionRequest.getItemCategory())
                 .itemStatus(auctionRequest.getItemStatus())

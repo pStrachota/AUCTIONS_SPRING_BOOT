@@ -2,6 +2,7 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,8 @@ public class AuctionController {
     private final AuctionService auctionService;
 
     @PostMapping("/auctions")
-    public ResponseEntity<Auction> createAuction(@RequestBody AuctionRequest auctionRequest) {
+    public ResponseEntity<Auction> createAuction(
+            @RequestBody @Valid AuctionRequest auctionRequest) {
         return new ResponseEntity<Auction>(auctionService.createAuction(auctionRequest),
                 HttpStatus.CREATED);
     }
@@ -66,11 +68,11 @@ public class AuctionController {
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false)
                     String sortDir) {
         return new ResponseEntity<>(
-                auctionService.getAllAuctions(pageNo, sortBy, sortBy), HttpStatus.OK);
+                auctionService.getAllAuctions(pageNo, sortBy, sortDir), HttpStatus.OK);
     }
 
     @PutMapping("/auctions/{id}")
-    public ResponseEntity<Auction> updateAuction(@RequestBody AuctionUpdate auctionUpdate,
+    public ResponseEntity<Auction> updateAuction(@RequestBody @Valid AuctionUpdate auctionUpdate,
                                                  @RequestParam Long id) {
         return new ResponseEntity<Auction>(auctionService.updateAuction(id, auctionUpdate),
                 HttpStatus.OK);
