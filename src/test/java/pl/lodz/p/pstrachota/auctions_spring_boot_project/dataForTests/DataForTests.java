@@ -61,4 +61,13 @@ public class DataForTests {
             .startingPrice(BigDecimal.valueOf(-10.0))
             .build();
 
+    public static BidRequest testBidRequestCorrectParams = BidRequest.builder()
+            .email("sample@mail.com")
+            .bidPrice(BigDecimal.valueOf(20.0))
+            .build();
+
+    public static BidRequest testBidRequestIncorrectPrice = BidRequest.builder()
+            .email("sample@mail.com")
+            .bidPrice(BigDecimal.valueOf(-5.0))
+            .build();
 }
