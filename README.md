@@ -22,7 +22,8 @@
 <h3 align="center">AUCTIONS_SPRING_BOOT_PROJECT</h3>
 
   <p align="center">
-    Auction restfull app, created using spring boot in order to consolidate knowledge
+    Auction restfull app, created using spring boot in order to consolidate knowledge.
+   
   </p>
 </div>
 
@@ -46,7 +47,11 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+ Obviously one can only learn given topic when they use it practically, that's why
+    after spending some time studying spring boot, rest api and overall creating web apps,
+    I decided to make my own project that included mentioned topics. 
+    This app mock auction websites, it enable user creating auctions and when auction type is licitation
+    it also allow other users to take part in product bidding. More details are given below.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -89,6 +94,7 @@ http://localhost:8080/auctions?pageNo=0&sortBy=currentPrice&sortDir=asc
 ## Business rules
 - User cannot create bid when auction is *buy now* type
 - User cannot delete auction (of licitation type) when there are already bids for this auction
+- Max auction time is 30 days
 - User can only delete highest price bid for given licitation
 - User can only delete their own bid (it is checked via email address)
 - And of course, wide range of validation (cannot apply negative price or auction end time cannot be in past etc)
@@ -103,7 +109,7 @@ Content-Type: application/json
 
 {
   "email": "sample@mail.com",
-  "description": "creatine 400g orangle flavour",
+  "description": "creatine 400g orange flavour",
   "auctionType": "BUY_NOW",
   "startingPrice": 40,
   "itemStatus": "NEW",
@@ -160,7 +166,7 @@ Response: HTTP 200
   {
     "id": 7,
     "email": "sample@mail.com",
-    "description": "creatine 400g orangle flavour",
+    "description": "creatine 400g orange flavour",
     "currentPrice": 40,
     "startingPrice": 40,
     "auctionType": "BUY_NOW",
