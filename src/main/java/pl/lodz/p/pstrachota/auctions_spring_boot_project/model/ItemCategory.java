@@ -5,5 +5,6 @@ public enum ItemCategory {
     CLOTHES,
     ELECTRONICS,
     FURNITURE,
+    SPORT,
     OTHER
 }
