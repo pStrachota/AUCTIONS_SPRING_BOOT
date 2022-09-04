@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
@@ -26,6 +27,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionD
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuctionServiceImpl implements AuctionService {
 
     private static final int PAGE_SIZE = 20;
@@ -53,6 +55,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Auction> getAllAuctions(int pageNo, String sortBy,
                                         String sortDir) {
         Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, sortDir.equalsIgnoreCase(
@@ -93,18 +96,21 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Auction> findByDescriptionContains(String description, int page) {
         return auctionRepository
                 .findByDescriptionContains(description, PageRequest.of(page, PAGE_SIZE));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Auction> findByItemCategory(ItemCategory itemCategory, int page) {
         return auctionRepository
                 .findByItemCategory(itemCategory, PageRequest.of(page, PAGE_SIZE));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, int page,
                                             String sortDir) {
         return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice,
