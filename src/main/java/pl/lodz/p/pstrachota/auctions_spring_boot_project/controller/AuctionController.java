@@ -1,5 +1,8 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.specArgResAnnotation.AuctionSpec;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,20 +42,19 @@ public class AuctionController {
 
     @GetMapping("/auctions")
     public List<Auction> getAllAuctions(
-            @And({
-                    @Spec(path = "description", params = "descr", spec = Like.class),
-                    @Spec(path = "itemCategory", spec = EqualIgnoreCase.class),
-                    @Spec(path = "currentPrice", params = {"priceFrom", "priceTo"},
-                            spec = Between.class),
-                    @Spec(path = "auctionType", spec = EqualIgnoreCase.class),
-                    @Spec(path = "itemStatus", spec = EqualIgnoreCase.class)
-            }) Specification<Auction> spec,
+            @RequestParam(value = "descr", required = false) String description,
+            @RequestParam(value = "itemCategory", required = false) String itemCategory,
+            @RequestParam(value = "priceFrom", required = false) Double priceFrom,
+            @RequestParam(value = "priceTo", required = false) Double priceTo,
+            @RequestParam(value = "auctionType", required = false) String auctionType,
+            @RequestParam(value = "itemStatus", required = false) String itemStatus,
+            @Parameter(hidden = true) AuctionSpec auctionSpec,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "sortBy", defaultValue = "currentPrice", required = false)
                     String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false)
                     String sortDir) {
-        return auctionService.getAllAuctions(spec, pageNo, sortBy, sortDir);
+        return auctionService.getAllAuctions(auctionSpec, pageNo, sortBy, sortDir);
     }
 
 
