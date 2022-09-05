@@ -1,9 +1,14 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.kaczmarzyk.spring.data.jpa.domain.Between;
+import net.kaczmarzyk.spring.data.jpa.domain.EqualIgnoreCase;
+import net.kaczmarzyk.spring.data.jpa.domain.Like;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
 
 @RestController
@@ -32,44 +36,24 @@ public class AuctionController {
                 HttpStatus.CREATED);
     }
 
-    @GetMapping("/auctions-description")
-    public ResponseEntity<List<Auction>> findByDescriptionContaining(
-            @RequestParam(required = true) String description,
-            @RequestParam int page) {
-        return new ResponseEntity<List<Auction>>(
-                auctionService.findByDescriptionContains(description, page), HttpStatus.OK);
-    }
-
-    @GetMapping("/auctions-category")
-    public ResponseEntity<List<Auction>> findByCategory(
-            @RequestParam(required = true) ItemCategory itemCategory,
-            @RequestParam int page) {
-        return new ResponseEntity<List<Auction>>(
-                auctionService.findByItemCategory(itemCategory, page), HttpStatus.OK);
-    }
-
-    @GetMapping("/auctions-price-between")
-    public ResponseEntity<List<Auction>> findByPriceBetween(
-            @RequestParam(required = false, defaultValue = "0") String minPrice,
-            @RequestParam(required = false, defaultValue = "10000") String maxPrice,
-            @RequestParam int page,
-            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
-        return new ResponseEntity<List<Auction>>(
-                auctionService
-                        .findByPriceBetween(new BigDecimal(minPrice), new BigDecimal(maxPrice),
-                                page, sortDir), HttpStatus.OK);
-    }
-
     @GetMapping("/auctions")
-    public ResponseEntity<List<Auction>> getAllAuctions(
+    public List<Auction> getAllAuctions(
+            @And({
+                    @Spec(path = "description", params = "descr", spec = Like.class),
+                    @Spec(path = "itemCategory", spec = EqualIgnoreCase.class),
+                    @Spec(path = "currentPrice", params = {"priceFrom", "priceTo"},
+                            spec = Between.class),
+                    @Spec(path = "auctionType", spec = EqualIgnoreCase.class),
+                    @Spec(path = "itemStatus", spec = EqualIgnoreCase.class)
+            }) Specification<Auction> spec,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "sortBy", defaultValue = "currentPrice", required = false)
                     String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false)
                     String sortDir) {
-        return new ResponseEntity<>(
-                auctionService.getAllAuctions(pageNo, sortBy, sortDir), HttpStatus.OK);
+        return auctionService.getAllAuctions(spec, pageNo, sortBy, sortDir);
     }
+
 
     @PutMapping("/auctions/{id}")
     public ResponseEntity<Auction> updateAuction(@RequestBody @Valid AuctionUpdate auctionUpdate,
