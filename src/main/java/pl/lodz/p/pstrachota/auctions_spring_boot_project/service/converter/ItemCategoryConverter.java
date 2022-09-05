@@ -19,6 +19,7 @@ public class ItemCategoryConverter implements AttributeConverter<ItemCategory, S
             case CLOTHES -> itemCategoryString = "CLOTHES";
             case ELECTRONICS -> itemCategoryString = "ELECTRONICS";
             case FURNITURE -> itemCategoryString = "FURNITURE";
+            case SPORT -> itemCategoryString = "SPORT";
             case OTHER -> itemCategoryString = "OTHER";
         }
         return itemCategoryString;
@@ -37,6 +38,7 @@ public class ItemCategoryConverter implements AttributeConverter<ItemCategory, S
             case "CLOTHES" -> itemCategory = ItemCategory.CLOTHES;
             case "ELECTRONICS" -> itemCategory = ItemCategory.ELECTRONICS;
             case "FURNITURE" -> itemCategory = ItemCategory.FURNITURE;
+            case "SPORT" -> itemCategory = ItemCategory.SPORT;
             case "OTHER" -> itemCategory = ItemCategory.OTHER;
         }
 
