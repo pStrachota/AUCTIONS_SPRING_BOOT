@@ -65,6 +65,7 @@
 * [Hibernate](https://hibernate.org/orm/documentation/)
 * [Mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html)
 * [Java mail API](https://javaee.github.io/javamail/docs/api/)
+* [Spec-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
