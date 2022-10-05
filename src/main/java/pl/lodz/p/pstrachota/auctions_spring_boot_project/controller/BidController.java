@@ -25,7 +25,7 @@ public class BidController {
     public ResponseEntity<Bid> createBid(@PathVariable Long id,
                                          @RequestBody @Valid BidRequest bidRequest) {
 
-        return new ResponseEntity<Bid>(bidServiceImpl.createBid(bidRequest, id),
+        return new ResponseEntity<>(bidServiceImpl.createBid(bidRequest, id),
                 HttpStatus.CREATED);
     }
 
@@ -34,7 +34,7 @@ public class BidController {
     public ResponseEntity<Bid> deleteBid(@PathVariable Long id,
                                          @PathVariable Long bidId) {
 
-        return new ResponseEntity<Bid>(bidServiceImpl.deleteBid(id, bidId), HttpStatus.OK);
+        return new ResponseEntity<>(bidServiceImpl.deleteBid(id, bidId), HttpStatus.OK);
     }
 
 }

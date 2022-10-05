@@ -1,7 +1,7 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto;
 
-import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.maxAuctionLenghtInDays;
-import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.maxDescriptionLenght;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.MAX_AUCTION_LENGTH_IN_DAYS;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.MAX_DESCRIPTION_LENGTH;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ public class AuctionRequest {
     private String email;
 
     @Schema(example = "sample description")
-    @Size(min = 1, max = maxDescriptionLenght, message = "Description must be provided")
+    @Size(min = 1, max = MAX_DESCRIPTION_LENGTH, message = "Description must be provided")
     private String description;
 
     private AuctionType auctionType;
@@ -39,7 +39,8 @@ public class AuctionRequest {
     private ItemCategory itemCategory;
 
     @Min(value = 1, message = "Auction end time must be provided")
-    @Max(value = maxAuctionLenghtInDays, message = "Auction end time cannot be longer that " + maxAuctionLenghtInDays)
+    @Max(value = MAX_AUCTION_LENGTH_IN_DAYS, message = "Auction end time cannot be longer that " +
+            MAX_AUCTION_LENGTH_IN_DAYS)
     private int daysToEndTime;
 
 }
