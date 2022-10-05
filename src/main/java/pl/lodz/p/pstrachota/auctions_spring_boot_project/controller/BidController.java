@@ -1,5 +1,6 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,19 +20,21 @@ public class BidController {
 
     private final BidServiceImpl bidServiceImpl;
 
+    @Operation(summary = "Create new bid")
     @PostMapping("/auctions/{id}/bids")
     public ResponseEntity<Bid> createBid(@PathVariable Long id,
                                          @RequestBody @Valid BidRequest bidRequest) {
 
-        return new ResponseEntity<Bid>(bidServiceImpl.createBid(bidRequest, id),
+        return new ResponseEntity<>(bidServiceImpl.createBid(bidRequest, id),
                 HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Delete bid by id")
     @DeleteMapping("/auctions/{id}/bids/{bidId}")
     public ResponseEntity<Bid> deleteBid(@PathVariable Long id,
                                          @PathVariable Long bidId) {
 
-        return new ResponseEntity<Bid>(bidServiceImpl.deleteBid(id, bidId), HttpStatus.OK);
+        return new ResponseEntity<>(bidServiceImpl.deleteBid(id, bidId), HttpStatus.OK);
     }
 
 }

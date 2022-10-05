@@ -10,7 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
@@ -18,7 +20,9 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOpe
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
@@ -26,6 +30,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionD
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuctionServiceImpl implements AuctionService {
 
     private static final int PAGE_SIZE = 20;
@@ -53,12 +58,13 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> getAllAuctions(int pageNo, String sortBy,
+    @Transactional(readOnly = true)
+    public List<Auction> getAllAuctions(Specification<Auction> spec, int pageNo, String sortBy,
                                         String sortDir) {
         Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, sortDir.equalsIgnoreCase(
                 Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
                 Sort.by(sortBy).descending());
-        Page<Auction> auctions = auctionRepository.findAll(pageable);
+        Page<Auction> auctions = auctionRepository.findAll(spec, pageable);
 
         return auctions.getContent();
     }
@@ -90,27 +96,6 @@ public class AuctionServiceImpl implements AuctionService {
         Optional.ofNullable(auctionUpdate.getEmail()).ifPresent(auctionToUpdate::setEmail);
 
         return auctionRepository.save(auctionToUpdate);
-    }
-
-    @Override
-    public List<Auction> findByDescriptionContains(String description, int page) {
-        return auctionRepository
-                .findByDescriptionContains(description, PageRequest.of(page, PAGE_SIZE));
-    }
-
-    @Override
-    public List<Auction> findByItemCategory(ItemCategory itemCategory, int page) {
-        return auctionRepository
-                .findByItemCategory(itemCategory, PageRequest.of(page, PAGE_SIZE));
-    }
-
-    @Override
-    public List<Auction> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, int page,
-                                            String sortDir) {
-        return auctionRepository.findAllByCurrentPriceBetween(minPrice, maxPrice,
-                PageRequest.of(page, PAGE_SIZE, sortDir.equalsIgnoreCase(
-                        Sort.Direction.ASC.name()) ? Sort.by("currentPrice").ascending() :
-                        Sort.by("price").descending()));
     }
 
 }

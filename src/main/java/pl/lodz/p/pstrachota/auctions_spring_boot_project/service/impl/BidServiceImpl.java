@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.events.MailSenderPublisher;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectAuctionTypeException;
@@ -24,6 +25,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.BidDtoMa
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BidServiceImpl implements BidService {
 
     private final BidRepository bidRepository;

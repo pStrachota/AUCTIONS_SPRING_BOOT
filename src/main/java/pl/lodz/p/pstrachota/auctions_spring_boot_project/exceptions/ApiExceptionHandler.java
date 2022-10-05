@@ -48,6 +48,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public final ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex,
+                                                                     WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status,
