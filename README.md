@@ -69,7 +69,13 @@
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## How to run
+
+## How to use
+
+Project is deployed on Heroku on given swagger-ui address:
+https://auctions-spring-boot-app.herokuapp.com/swagger-ui/index.html#/
+
+Nonetheless one can also run it manually using steps below:
 - Clone this repository
 - Open project base folder in terminal
 - Run following command:
