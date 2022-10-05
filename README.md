@@ -47,10 +47,10 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
- Obviously one can only learn given topic when they use it practically, that's why
+ Obviously, one can only learn given topic when they use it practically, that's why,
     after spending some time studying spring boot, rest api and overall creating web apps,
-    I decided to make my own project that included mentioned topics. 
-    This app mock auction websites, it enable user creating auctions and when auction type is licitation
+    I decided to make my own project that includes mentioned topics. 
+    This app mock auction websites, it enable user to create auctions and when auction type is licitation
     it also allow other users to take part in product bidding. More details are given below.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -81,15 +81,15 @@ mvn spring-boot:run
 - User can create auction that can be either *licitation* or *buy now*
 (in the first case other users can add bids to raise the price,
 and in the latter price is constant)
-- When creating auction user choose adequate category and item status (new, used)
-- User can also specify autcion end date (in days)
+- When creating auction, user choose adequate category (e.g. sport, book) and item status (new, used)
+- User can also specify auction end date (in days)
 - When new bid is created, all users that earlier took part in the licitation
-will be send an email with new highest price
+will be sent an email with new highest price
 - Also when current highest bid is deleted, again all users that took part in licitation
-will be send an email with new highest price 
+will be sent an email with new highest price 
 - User can get paginated and sorted results, for example
 ```
-http://localhost:8080/auctions?pageNo=0&sortBy=currentPrice&sortDir=asc
+http://localhost:8080/auctions?itemCategory=sport&pageNo=0&sortBy=currentPrice&sortDir=asc
 ```
 
 ## Business rules
@@ -97,8 +97,8 @@ http://localhost:8080/auctions?pageNo=0&sortBy=currentPrice&sortDir=asc
 - User cannot delete auction (of licitation type) when there are already bids for this auction
 - Max auction time is 30 days
 - User can only delete highest price bid for given licitation
-- User can only delete their own bid (it is checked via email address)
-- And of course, wide range of validation (cannot apply negative price or auction end time cannot be in past etc)
+- User can only delete his / her bid (it is checked via email address)
+- And of course, wide range of validation (cannot apply negative price or auction end time cannot be in past etc.)
 
 ## Endpoints
 
@@ -114,7 +114,7 @@ Content-Type: application/json
   "auctionType": "BUY_NOW",
   "startingPrice": 40,
   "itemStatus": "NEW",
-  "itemCategory": "OTHER",
+  "itemCategory": "SPORT",
   "daysToEndTime": 10
 }
 
@@ -127,7 +127,7 @@ RESPONSE: HTTP 201 (Created)
   "startingPrice": 40,
   "auctionType": "BUY_NOW",
   "itemStatus": "NEW",
-  "itemCategory": "OTHER",
+  "itemCategory": "SPORT",
   "auctionEndTime": "2022-09-08T21:07:44.4526542",
   "auctionStartTime": "2022-08-29T21:07:44.4536646"
 }
@@ -172,7 +172,7 @@ Response: HTTP 200
     "startingPrice": 40,
     "auctionType": "BUY_NOW",
     "itemStatus": "NEW",
-    "itemCategory": "OTHER",
+    "itemCategory": "SPORT",
     "auctionEndTime": "2022-09-08T21:07:44.452654",
     "auctionStartTime": "2022-08-29T21:07:44.453665"
   },
