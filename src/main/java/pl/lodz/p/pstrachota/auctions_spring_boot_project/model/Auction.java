@@ -1,6 +1,7 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.Convert;
@@ -25,6 +26,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.ItemS
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Schema
 public class Auction {
 
     @Id
@@ -39,12 +41,15 @@ public class Auction {
 
     private BigDecimal startingPrice;
 
+    @Schema(description = "Auction type")
     @Convert(converter = AuctionTypeConverter.class)
     private AuctionType auctionType;
 
+    @Schema(description = "Item status")
     @Convert(converter = ItemStatusConverter.class)
     private ItemStatus itemStatus;
 
+    @Schema(description = "Item category")
     @Convert(converter = ItemCategoryConverter.class)
     private ItemCategory itemCategory;
 

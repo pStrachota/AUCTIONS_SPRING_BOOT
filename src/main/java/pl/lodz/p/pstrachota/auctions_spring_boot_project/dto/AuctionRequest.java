@@ -3,6 +3,7 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.maxAuctionLenghtInDays;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.maxDescriptionLenght;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
@@ -19,15 +20,18 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.Pric
 @Builder
 public class AuctionRequest {
 
+    @Schema(example = "sample@mail.com")
     @Email(regexp = "[^@]+@[^@]+\\.[^@.]+", message = "Email is not valid")
     private String email;
 
+    @Schema(example = "sample description")
     @Size(min = 1, max = maxDescriptionLenght, message = "Description must be provided")
     private String description;
 
     private AuctionType auctionType;
 
     @PriceConstraint
+    @Schema(example = "1.00")
     private BigDecimal startingPrice;
 
     private ItemStatus itemStatus;

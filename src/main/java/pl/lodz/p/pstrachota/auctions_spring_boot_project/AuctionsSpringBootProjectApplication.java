@@ -1,5 +1,7 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import java.util.List;
 import net.kaczmarzyk.spring.data.jpa.web.SpecificationArgumentResolver;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableAsync
+@OpenAPIDefinition(info = @Info(title = "Auctions API", description = "API that mocks auction websites", version = "1.0"))
 public class AuctionsSpringBootProjectApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
