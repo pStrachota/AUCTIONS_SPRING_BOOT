@@ -1,4 +1,4 @@
-package pl.lodz.p.pstrachota.auctions_spring_boot_project.auth;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller.auth;
 
 import jakarta.validation.Valid;
 import java.util.stream.Collectors;

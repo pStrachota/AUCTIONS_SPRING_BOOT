@@ -1,4 +1,4 @@
-package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller.auction;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
