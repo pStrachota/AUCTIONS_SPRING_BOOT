@@ -1,8 +1,8 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces;
 
 import java.util.List;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bid;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BidRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
 
 public interface BidService {
 

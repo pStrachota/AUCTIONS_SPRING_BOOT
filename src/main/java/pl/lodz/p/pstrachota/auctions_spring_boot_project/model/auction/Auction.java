@@ -1,9 +1,12 @@
-package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction;
 
 
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.MAX_DESCRIPTION_LENGTH;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -15,14 +18,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AbstractEntity;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.ItemCategoryConverter;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.ItemStatusConverter;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.PriceConstraint;

@@ -1,15 +1,10 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces;
 
-import java.math.BigDecimal;
 import java.util.List;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionUpdate;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
 
 public interface AuctionService {
 

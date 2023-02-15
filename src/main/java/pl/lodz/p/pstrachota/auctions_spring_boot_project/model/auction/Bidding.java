@@ -1,4 +1,4 @@
-package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;

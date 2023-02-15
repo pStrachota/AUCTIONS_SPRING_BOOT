@@ -1,11 +1,11 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests;
 
 import java.math.BigDecimal;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BidRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.AuctionType;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemCategory;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemStatus;
 
 public class DataForTests {
 

@@ -1,12 +1,12 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper;
 
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionRequest;
 import java.time.LocalDateTime;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BiddingRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BuyNowRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bidding;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.BuyNow;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BiddingRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BuyNowRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.BuyNow;
 
 public class AuctionDtoMapper {
 

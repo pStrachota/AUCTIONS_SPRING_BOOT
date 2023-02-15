@@ -10,7 +10,6 @@ import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.Dat
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testAuctionRequestIncorrectPrice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl.AuctionServiceImpl;

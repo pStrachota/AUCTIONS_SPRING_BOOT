@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.util.List;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,21 +14,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BiddingRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BuyNowRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bidding;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.BuyNow;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionUpdate;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BiddingRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BuyNowRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.AuctionType;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.BuyNow;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemCategory;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemStatus;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.specArgResAnnotation.AuctionSpec;
 
 @RestController
+@RequestMapping("/auctions")
 @RequiredArgsConstructor
 public class AuctionController {
 

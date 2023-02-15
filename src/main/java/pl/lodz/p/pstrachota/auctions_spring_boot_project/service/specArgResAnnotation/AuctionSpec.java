@@ -6,7 +6,7 @@ import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.jpa.domain.Specification;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
 
 
 @And({

@@ -23,7 +23,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.events.MailSenderPublis
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectAuctionTypeException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bid;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl.BidServiceImpl;

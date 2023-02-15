@@ -1,4 +1,4 @@
-package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction;
 
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.MAX_DESCRIPTION_LENGTH;
 

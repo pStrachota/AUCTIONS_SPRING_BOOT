@@ -11,37 +11,39 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bid;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl.BidServiceImpl;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BidRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.BidService;
 
 @RestController
+@RequestMapping("/auctions")
 @RequiredArgsConstructor
 public class BidController {
 
-    private final BidServiceImpl bidServiceImpl;
+    private final BidService bidService;
 
     @Operation(summary = "Create new bid")
-    @PostMapping("/auctions/{id}/bids")
+    @PostMapping("/{id}/bids")
     public ResponseEntity<Bid> createBid(@PathVariable Long id,
                                          @RequestBody @Valid BidRequest bidRequest) {
 
-        return new ResponseEntity<>(bidServiceImpl.createBid(bidRequest, id),
+        return new ResponseEntity<>(bidService.createBid(bidRequest, id),
                 HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete bid by id")
-    @DeleteMapping("/auctions/{id}/bids/{bidId}")
+    @DeleteMapping("/{id}/bids/{bidId}")
     public ResponseEntity<Bid> deleteBid(@PathVariable Long id,
                                          @PathVariable Long bidId) {
 
-        return new ResponseEntity<>(bidServiceImpl.deleteBid(id, bidId), HttpStatus.OK);
+        return new ResponseEntity<>(bidService.deleteBid(id, bidId), HttpStatus.OK);
     }
 
     @GetMapping("/{auctionId}/bids")
     public ResponseEntity<List<Bid>> getBidsForAuction(@PathVariable Long auctionId) {
-        return new ResponseEntity<>(bidServiceImpl.getBidsForAuction(auctionId), HttpStatus.OK);
+        return new ResponseEntity<>(bidService.getBidsForAuction(auctionId), HttpStatus.OK);
     }
 
 }

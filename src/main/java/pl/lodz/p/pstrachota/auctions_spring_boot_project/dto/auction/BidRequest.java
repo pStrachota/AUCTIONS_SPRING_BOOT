@@ -1,4 +1,4 @@
-package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto;
+package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
