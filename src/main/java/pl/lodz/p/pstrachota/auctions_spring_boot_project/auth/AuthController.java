@@ -18,11 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.JwtResponse;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.LoginRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.SingUpRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.TokenRefreshRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.TokenRefreshResponse;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.RefreshToken;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.RoleEnum;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.security.JwtUtils;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.security.UserDetailsImpl;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl.UserDetailsServiceImpl;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.RefreshTokenService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.UserService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -32,6 +37,8 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.User
 public class AuthController {
 
     final AuthenticationManager authenticationManager;
+
+    final RefreshTokenService refreshTokenService;
 
     final UserDetailsServiceImpl userDetailsService;
 
@@ -55,11 +62,29 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()).get(0);
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(jwt, refreshToken.getToken(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 role));
+    }
+
+    @PostMapping("/refreshToken")
+    public ResponseEntity<?> refreshToken(
+            @Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
+
+        String requestRefreshToken = tokenRefreshRequest.getRefreshToken();
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new NotFoundException("Refresh token is not in database!"));
+
     }
 
     @PostMapping("/signup")

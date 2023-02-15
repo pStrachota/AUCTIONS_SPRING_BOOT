@@ -1,26 +1,18 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class JwtResponse {
+@Builder
+public class TokenRefreshRequest {
 
-    private String token;
-
+    @NotBlank
     private String refreshToken;
-
-    private Long id;
-
-    private String username;
-
-    private String email;
-
-    private String role;
 
 }
