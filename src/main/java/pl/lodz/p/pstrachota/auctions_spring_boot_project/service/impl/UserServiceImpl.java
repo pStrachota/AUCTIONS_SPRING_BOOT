@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.PasswordNotMatchException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.UserRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.UserService;
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(encoder.encode(newPassword));
             userRepository.save(user);
         } else {
-            throw new IllegalArgumentException("Old password is incorrect");
+            throw new PasswordNotMatchException("Old password is incorrect");
         }
     }
 

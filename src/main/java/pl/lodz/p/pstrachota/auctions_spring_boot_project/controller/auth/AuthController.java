@@ -20,6 +20,8 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.LoginRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.SingUpRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.TokenRefreshRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auth.TokenRefreshResponse;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.DuplicatedEmailException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.DuplicatedLoginException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.RefreshToken;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.RoleEnum;
@@ -91,11 +93,11 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SingUpRequest singupRequest) {
 
         if (userService.existsByUsername(singupRequest.getUsername())) {
-            throw new IllegalArgumentException("Error: Username is already taken!");
+            throw new DuplicatedLoginException("Error: Username is already taken!");
         }
 
         if (userService.existsByEmail(singupRequest.getEmail())) {
-            throw new IllegalArgumentException("Error: Email is already in use!");
+            throw new DuplicatedEmailException("Error: Email is already in use!");
         }
 
         User user = new User(singupRequest.getEmail(),
