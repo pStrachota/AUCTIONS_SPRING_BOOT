@@ -2,8 +2,8 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import java.util.List;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.AuctionUpdate;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BiddingRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BuyNowRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bidding;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.BuyNow;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
@@ -30,12 +33,21 @@ public class AuctionController {
 
     private final AuctionService auctionService;
 
-    @Operation(summary = "Create new auction")
-    @PostMapping("/auctions")
-    public ResponseEntity<Auction> createAuction(
-            @RequestBody @Valid AuctionRequest auctionRequest) {
-        return new ResponseEntity<>(auctionService.createAuction(auctionRequest),
-                HttpStatus.CREATED);
+    @Operation(summary = "Create new buy now auction")
+    @PostMapping("/buy-now")
+    public ResponseEntity<BuyNow> createBuyNowAuction(
+            @RequestBody @Valid BuyNowRequest buyNowRequest) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body((BuyNow) auctionService.createAuction(buyNowRequest));
+    }
+
+    @Operation(summary = "Create new bidding auction")
+    @PostMapping("/bidding")
+    public ResponseEntity<Bidding> createBiddingAuction(
+            @RequestBody @Valid BiddingRequest biddingRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body((Bidding) auctionService.createAuction(biddingRequest));
     }
 
     @Operation(summary = "Get all auctions")
@@ -55,6 +67,11 @@ public class AuctionController {
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false)
                     String sortDir) {
         return auctionService.getAllAuctions(auctionSpec, pageNo, sortBy, sortDir);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Auction> getAuctionById(@PathVariable Long id) {
+        return new ResponseEntity<>(auctionService.getAuctionById(id), HttpStatus.OK);
     }
 
 
