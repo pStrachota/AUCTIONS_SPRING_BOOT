@@ -16,12 +16,11 @@ public class BidDtoMapper {
                 .build();
     }
 
-    public static Bid mapToBid(BidRequest bidRequest, long relatedOfferId) {
+    public static Bid mapToBid(BidRequest bidRequest) {
 
         return Bid.builder()
                 .bidPrice(bidRequest.getBidPrice())
                 .email(bidRequest.getEmail())
-                .relatedOfferId(relatedOfferId)
                 .bidTime(LocalDateTime.now())
                 .build();
     }

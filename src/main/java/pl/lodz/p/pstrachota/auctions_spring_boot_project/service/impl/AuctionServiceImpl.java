@@ -1,7 +1,6 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl;
 
 import java.math.BigDecimal;
-import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +19,6 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOpe
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemCategory;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.ItemStatus;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
@@ -50,7 +46,7 @@ public class AuctionServiceImpl implements AuctionService {
                     "Auction end time must be at least one day after start time");
         }
 
-        if (auction.getCurrentPrice().compareTo(BigDecimal.ZERO) < 0) {
+        if (auction.getStartingPrice().compareTo(BigDecimal.ZERO) < 0) {
             throw new IncorrectPriceException("Min price cannot be negative");
         }
 
@@ -77,7 +73,7 @@ public class AuctionServiceImpl implements AuctionService {
         if (auctionToDelete.getAuctionEndTime().isBefore(LocalDateTime.now())) {
             throw new IncorrectDateException("Cannot delete auction that has already ended");
         }
-        long bidsForAuctionCount = bidRepository.findByRelatedOfferId(id).size();
+        int bidsForAuctionCount = bidRepository.findByBiddingAuctionId(id).size();
 
         if (bidsForAuctionCount != 0) {
             throw new IncorrectOperationException("Cannot delete auction with bids");
@@ -96,6 +92,12 @@ public class AuctionServiceImpl implements AuctionService {
         Optional.ofNullable(auctionUpdate.getEmail()).ifPresent(auctionToUpdate::setEmail);
 
         return auctionRepository.save(auctionToUpdate);
+    }
+
+    @Override
+    public Auction getAuctionById(Long id) {
+        return auctionRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Auction with id " + id + " not found"));
     }
 
 }

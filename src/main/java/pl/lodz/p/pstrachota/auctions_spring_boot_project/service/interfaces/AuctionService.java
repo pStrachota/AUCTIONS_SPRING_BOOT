@@ -21,5 +21,6 @@ public interface AuctionService {
 
     Auction updateAuction(Long id, AuctionUpdate auctionUpdate);
 
+    Auction getAuctionById(Long id);
 }
 

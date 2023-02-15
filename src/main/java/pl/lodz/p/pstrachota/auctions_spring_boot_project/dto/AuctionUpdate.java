@@ -3,8 +3,8 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properties.AppConstants.MAX_DESCRIPTION_LENGTH;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
