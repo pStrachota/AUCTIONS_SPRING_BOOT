@@ -16,10 +16,9 @@ public class BiddingRequest extends AuctionRequest {
     private boolean isLimited;
 
     @Builder
-    public BiddingRequest(
-            String email, String description, BigDecimal startingPrice, ItemStatus itemStatus,
-            ItemCategory itemCategory, int daysToEndTime, boolean isLimited) {
-        super(email, description, startingPrice, itemStatus, itemCategory, daysToEndTime);
+    public BiddingRequest(String description, BigDecimal startingPrice, ItemStatus itemStatus,
+                          ItemCategory itemCategory, int daysToEndTime, boolean isLimited) {
+        super(description, startingPrice, itemStatus, itemCategory, daysToEndTime);
         this.isLimited = isLimited;
     }
 }

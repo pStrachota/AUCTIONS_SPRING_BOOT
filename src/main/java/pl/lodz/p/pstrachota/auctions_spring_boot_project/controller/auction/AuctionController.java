@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +26,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.BuyNow;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemCategory;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemStatus;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.security.CurrentUser;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.specArgResAnnotation.AuctionSpec;
 
@@ -38,19 +39,21 @@ public class AuctionController {
 
     @Operation(summary = "Create new buy now auction")
     @PostMapping("/buy-now")
-    public ResponseEntity<BuyNow> createBuyNowAuction(
-            @RequestBody @Valid BuyNowRequest buyNowRequest) {
+    public ResponseEntity<BuyNow> createBuyNowAuction(@CurrentUser UserDetails userDetails,
+                                                      @RequestBody
+                                                      @Valid BuyNowRequest buyNowRequest) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body((BuyNow) auctionService.createAuction(buyNowRequest));
+                .body((BuyNow) auctionService.createAuction(buyNowRequest, userDetails));
     }
 
     @Operation(summary = "Create new bidding auction")
     @PostMapping("/bidding")
-    public ResponseEntity<Bidding> createBiddingAuction(
-            @RequestBody @Valid BiddingRequest biddingRequest) {
+    public ResponseEntity<Bidding> createBiddingAuction(@CurrentUser UserDetails userDetails,
+                                                        @RequestBody
+                                                        @Valid BiddingRequest biddingRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body((Bidding) auctionService.createAuction(biddingRequest));
+                .body((Bidding) auctionService.createAuction(biddingRequest, userDetails));
     }
 
     @Operation(summary = "Get all auctions")
@@ -65,7 +68,7 @@ public class AuctionController {
             @RequestParam(value = "itemStatus", required = false) ItemStatus itemStatus,
             @Parameter(hidden = true) AuctionSpec auctionSpec,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "sortBy", defaultValue = "currentPrice", required = false)
+            @RequestParam(value = "sortBy", defaultValue = "startingPrice", required = false)
                     String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false)
                     String sortDir) {
@@ -80,16 +83,18 @@ public class AuctionController {
 
     @Operation(summary = "Update auction info by id")
     @PutMapping("/auctions/{id}")
-    public ResponseEntity<Auction> updateAuction(@RequestBody @Valid AuctionUpdate auctionUpdate,
+    public ResponseEntity<Auction> updateAuction(@CurrentUser UserDetails userDetails,
+                                                 @RequestBody @Valid AuctionUpdate auctionUpdate,
                                                  @PathVariable Long id) {
-        return new ResponseEntity<>(auctionService.updateAuction(id, auctionUpdate),
+        return new ResponseEntity<>(auctionService.updateAuction(id, auctionUpdate, userDetails),
                 HttpStatus.OK);
     }
 
     @Operation(summary = "Delete auction by id")
     @DeleteMapping("/auctions/{id}")
-    public ResponseEntity<Auction> deleteAuction(@PathVariable Long id) {
-        return new ResponseEntity<>(auctionService.deleteAuction(id), HttpStatus.OK);
+    public ResponseEntity<Auction> deleteAuction(@CurrentUser UserDetails userDetails,
+                                                 @PathVariable Long id) {
+        return new ResponseEntity<>(auctionService.deleteAuction(id, userDetails), HttpStatus.OK);
     }
 
 }

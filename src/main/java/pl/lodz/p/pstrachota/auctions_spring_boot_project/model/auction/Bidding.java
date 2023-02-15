@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.PriceConstraint;
 
 @Entity
@@ -45,7 +46,7 @@ public class Bidding extends Auction {
                    ItemStatus itemStatus,
                    ItemCategory itemCategory, LocalDateTime auctionEndTime,
                    LocalDateTime auctionStartTime, boolean isLimited, BigDecimal currentPrice) {
-        super(id, "bidding", description, startingPrice, itemStatus,
+        super(id, "bidding", description, new User(), startingPrice, itemStatus,
                 itemCategory, auctionEndTime,
                 auctionStartTime);
         this.isLimited = isLimited;

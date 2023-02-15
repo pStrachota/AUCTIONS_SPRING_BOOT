@@ -16,10 +16,9 @@ public class BuyNowRequest extends AuctionRequest {
     private boolean isPremium;
 
     @Builder
-    public BuyNowRequest(
-            String email, String description, BigDecimal startingPrice, ItemStatus itemStatus,
-            ItemCategory itemCategory, int daysToEndTime, boolean isPremium) {
-        super(email, description, startingPrice, itemStatus, itemCategory, daysToEndTime);
+    public BuyNowRequest(String description, BigDecimal startingPrice, ItemStatus itemStatus,
+                         ItemCategory itemCategory, int daysToEndTime, boolean isPremium) {
+        super(description, startingPrice, itemStatus, itemCategory, daysToEndTime);
         this.isPremium = isPremium;
     }
 }

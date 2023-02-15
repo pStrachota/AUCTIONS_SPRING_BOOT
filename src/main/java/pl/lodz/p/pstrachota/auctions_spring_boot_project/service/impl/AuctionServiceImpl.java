@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionRequest;
@@ -19,6 +20,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOpe
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
@@ -33,9 +35,13 @@ public class AuctionServiceImpl implements AuctionService {
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
 
-    public Auction createAuction(AuctionRequest auctionRequest) {
+    public Auction createAuction(AuctionRequest auctionRequest, UserDetails userDetails) {
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new NotFoundException("User not found"));
 
         Auction auction = AuctionDtoMapper.mapAuctionRequestToAuction(auctionRequest);
+        auction.setUser(user);
 
         if (auction.getAuctionEndTime().isBefore(LocalDateTime.now())) {
             throw new IncorrectDateException("Auction end time cannot be in the past");
@@ -66,9 +72,13 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Auction deleteAuction(Long id) {
+    public Auction deleteAuction(Long id, UserDetails userDetails) {
         Auction auctionToDelete = auctionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Offer with id " + id + " not found"));
+
+        if (!auctionToDelete.getUser().getUsername().equals(userDetails.getUsername())) {
+            throw new IncorrectOperationException("Cannot delete auction that is not yours");
+        }
 
         if (auctionToDelete.getAuctionEndTime().isBefore(LocalDateTime.now())) {
             throw new IncorrectDateException("Cannot delete auction that has already ended");
@@ -83,13 +93,16 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Auction updateAuction(Long id, AuctionUpdate auctionUpdate) {
+    public Auction updateAuction(Long id, AuctionUpdate auctionUpdate, UserDetails userDetails) {
         Auction auctionToUpdate = auctionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Auction with id " + id + " not found"));
 
+        if (!auctionToUpdate.getUser().getUsername().equals(userDetails.getUsername())) {
+            throw new IncorrectOperationException("Cannot update auction that is not yours");
+        }
+
         Optional.ofNullable(auctionUpdate.getDescription())
                 .ifPresent(auctionToUpdate::setDescription);
-        Optional.ofNullable(auctionUpdate.getEmail()).ifPresent(auctionToUpdate::setEmail);
 
         return auctionRepository.save(auctionToUpdate);
     }

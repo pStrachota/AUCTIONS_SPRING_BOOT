@@ -12,7 +12,6 @@ public class BidDtoMapper {
     public static BidRequest mapToBidRequest(Bid bid) {
         return BidRequest.builder()
                 .bidPrice(bid.getBidPrice())
-                .email(bid.getEmail())
                 .build();
     }
 
@@ -20,7 +19,6 @@ public class BidDtoMapper {
 
         return Bid.builder()
                 .bidPrice(bidRequest.getBidPrice())
-                .email(bidRequest.getEmail())
                 .bidTime(LocalDateTime.now())
                 .build();
     }

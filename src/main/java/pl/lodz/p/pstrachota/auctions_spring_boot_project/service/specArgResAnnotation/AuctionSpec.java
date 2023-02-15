@@ -12,7 +12,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
 @And({
         @Spec(path = "description", params = "descr", spec = Like.class),
         @Spec(path = "itemCategory", spec = EqualIgnoreCase.class),
-        @Spec(path = "currentPrice", params = {"priceFrom", "priceTo"},
+        @Spec(path = "startingPrice", params = {"priceFrom", "priceTo"},
                 spec = Between.class),
         @Spec(path = "auctionType", spec = EqualIgnoreCase.class),
         @Spec(path = "itemStatus", spec = EqualIgnoreCase.class)

@@ -23,10 +23,6 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.Pric
 @AllArgsConstructor
 public class AuctionRequest {
 
-    @Schema(example = "sample@mail.com")
-    @Email(regexp = "[^@]+@[^@]+\\.[^@.]+", message = "Email is not valid")
-    private String email;
-
     @Schema(example = "sample description")
     @Size(min = 1, max = MAX_DESCRIPTION_LENGTH, message = "Description must be provided")
     private String description;

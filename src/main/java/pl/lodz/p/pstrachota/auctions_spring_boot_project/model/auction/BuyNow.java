@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 
 @Entity
 @Getter
@@ -26,7 +27,7 @@ public class BuyNow extends Auction {
                   ItemStatus itemStatus,
                   ItemCategory itemCategory, LocalDateTime auctionEndTime,
                   LocalDateTime auctionStartTime, boolean isPremium) {
-        super(id, "buy_now", description, startingPrice, itemStatus, itemCategory,
+        super(id, "buy_now", description, new User(), startingPrice, itemStatus, itemCategory,
                 auctionEndTime,
                 auctionStartTime);
         this.isPremium = isPremium;

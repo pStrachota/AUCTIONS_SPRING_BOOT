@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BidRequest;
@@ -15,8 +16,10 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPri
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.UserRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.BidService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.BidDtoMapper;
 
@@ -28,12 +31,18 @@ public class BidServiceImpl implements BidService {
     private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
     private final MailSenderPublisher mailSenderPublisher;
+    private final UserRepository userRepository;
 
-    public Bid createBid(BidRequest bidRequest, Long auctionId) {
+    public Bid createBid(BidRequest bidRequest, Long auctionId, UserDetails userDetails) {
         Bidding bidding = (Bidding) auctionRepository.findById(auctionId).orElseThrow(
                 () -> new NotFoundException(
                         "Auction with id " + auctionId + " not found"));
         Bid bid = BidDtoMapper.mapToBid(bidRequest);
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new NotFoundException(
+                        "User with username " + userDetails.getUsername() + " not found"));
+        bid.setUser(user);
 
         if (bid.getBidPrice().compareTo(bidding.getCurrentPrice()) <= 0) {
             throw new IncorrectPriceException("Bid price must be greater than offer price");
@@ -48,13 +57,14 @@ public class BidServiceImpl implements BidService {
 
         List<Bid> bidsForGivenOffer = bidding.getBids();
         List<String> emailBids =
-                bidsForGivenOffer.stream().map(Bid::getEmail).collect(Collectors.toList());
+                bidsForGivenOffer.stream().map(b -> b.getUser().getEmail())
+                        .collect(Collectors.toList());
         mailSenderPublisher.publishNewBid(emailBids, auctionId, bid.getBidPrice());
         return bidding.getBids().get(bidding.getBids().size() - 1);
     }
 
     @Override
-    public Bid deleteBid(Long auctionId, Long bidId) {
+    public Bid deleteBid(Long auctionId, Long bidId, UserDetails userDetails) {
 
         Bid bidToDelete = bidRepository.findById(bidId).orElseThrow(
                 () -> new NotFoundException("Bid with id " + bidId + " not found"));
@@ -66,12 +76,12 @@ public class BidServiceImpl implements BidService {
         Bid highestPriceBid =
                 bidsForGivenOffer.stream().max(Comparator.comparing(Bid::getBidPrice)).get();
 
-        if (!bidToDelete.getEmail().equals(highestPriceBid.getEmail())) {
-            throw new IncorrectOperationException("You can only delete your own bid");
+        if (bidId.equals(highestPriceBid.getBidId())) {
+            throw new IncorrectOperationException("You can't delete highest bid");
         }
 
-        if (highestPriceBid.getBidId() != bidId) {
-            throw new IncorrectOperationException("You can only delete bid with highest price");
+        if (!bidToDelete.getUser().getUsername().equals(userDetails.getUsername())) {
+            throw new IncorrectOperationException("You can only delete your own bid");
         }
 
         if (bidsForGivenOffer.size() == 1) {
@@ -81,7 +91,8 @@ public class BidServiceImpl implements BidService {
         }
 
         List<String> emailBids =
-                bidsForGivenOffer.stream().map(Bid::getEmail).collect(Collectors.toList());
+                bidsForGivenOffer.stream().map(b -> b.getUser().getEmail())
+                        .collect(Collectors.toList());
 
         mailSenderPublisher.publishDeletedBid(emailBids, auctionId, highestPriceBid.getBidPrice());
         bidding.removeBid(bidToDelete);
