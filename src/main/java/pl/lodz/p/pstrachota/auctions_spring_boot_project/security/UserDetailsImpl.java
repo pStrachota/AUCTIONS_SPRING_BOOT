@@ -41,7 +41,7 @@ public class UserDetailsImpl implements UserDetails {
                 List.of(new SimpleGrantedAuthority(user.getRoleName().name()));
 
         return new UserDetailsImpl(
-                user.getId(),
+                user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
@@ -50,7 +50,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public User getUser() {
         return User.builder()
-                .id(this.id)
+                .userId(this.id)
                 .username(this.username)
                 .email(this.email)
                 .password(this.password)

@@ -2,6 +2,7 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction;
 
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemStatu
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class BuyNowRequest extends AuctionRequest {
 
     @NotNull

@@ -1,7 +1,7 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemCategory;
 
 @Converter

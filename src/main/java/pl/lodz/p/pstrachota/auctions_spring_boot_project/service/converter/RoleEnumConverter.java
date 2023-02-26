@@ -1,6 +1,6 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.RoleEnum;
 
 public class RoleEnumConverter implements AttributeConverter<RoleEnum, String> {

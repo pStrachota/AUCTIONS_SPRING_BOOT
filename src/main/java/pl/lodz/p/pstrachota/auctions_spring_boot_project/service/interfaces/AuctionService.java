@@ -13,7 +13,7 @@ public interface AuctionService {
 
     List<Auction> getAllAuctions(Specification<Auction> spec, int pageNo, String sortBy, String sortDir);
 
-    Auction deleteAuction(Long id, UserDetails userDetails);
+    void deleteAuction(Long id, UserDetails userDetails);
 
     Auction updateAuction(Long id, AuctionUpdate auctionUpdate, UserDetails userDetails);
 

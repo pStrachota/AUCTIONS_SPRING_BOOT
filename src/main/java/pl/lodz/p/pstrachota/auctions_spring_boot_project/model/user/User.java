@@ -6,11 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GenerationType;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,7 +41,7 @@ public class User extends AbstractEntity {
                     @Parameter(name = "increment_size", value = "1")
             }
     )
-    private Long id;
+    private Long userId;
 
     @Email(regexp = "[^@]+@[^@]+\\.[^@.]+", message = "Email is not valid")
     @Column(unique = true)

@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,6 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.Pric
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema
 @DiscriminatorValue("bidding")
 public class Bidding extends Auction {
 

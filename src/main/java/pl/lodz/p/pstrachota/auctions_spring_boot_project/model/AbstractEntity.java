@@ -1,10 +1,10 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.UUID;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 import lombok.EqualsAndHashCode;
 
 @MappedSuperclass

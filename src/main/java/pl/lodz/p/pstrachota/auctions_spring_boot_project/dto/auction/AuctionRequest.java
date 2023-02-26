@@ -18,7 +18,6 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemStatu
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.PriceConstraint;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuctionRequest {
