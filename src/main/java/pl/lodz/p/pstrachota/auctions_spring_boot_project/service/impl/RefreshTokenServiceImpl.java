@@ -48,8 +48,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public void deleteByUserId(Long userId) {
-        refreshTokenRepository.deleteByUserId(userRepository.findById(userId).orElseThrow(
+        refreshTokenRepository.deleteByUserUserId(userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("User with id " + userId + " not found")
-        ).getId());
+        ).getUserId());
     }
 }

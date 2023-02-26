@@ -14,6 +14,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDat
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOperationException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.WrongAuctionOwnerException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
@@ -64,7 +65,7 @@ public class BidServiceImpl implements BidService {
     }
 
     @Override
-    public Bid deleteBid(Long auctionId, Long bidId, UserDetails userDetails) {
+    public void deleteBid(Long auctionId, Long bidId, UserDetails userDetails) {
 
         Bid bidToDelete = bidRepository.findById(bidId).orElseThrow(
                 () -> new NotFoundException("Bid with id " + bidId + " not found"));
@@ -76,12 +77,12 @@ public class BidServiceImpl implements BidService {
         Bid highestPriceBid =
                 bidsForGivenOffer.stream().max(Comparator.comparing(Bid::getBidPrice)).get();
 
-        if (bidId.equals(highestPriceBid.getBidId())) {
-            throw new IncorrectOperationException("You can't delete highest bid");
+        if (!highestPriceBid.getBidId().equals(bidId)) {
+            throw new IncorrectOperationException("You can only delete bid with highest price");
         }
 
         if (!bidToDelete.getUser().getUsername().equals(userDetails.getUsername())) {
-            throw new IncorrectOperationException("You can only delete your own bid");
+            throw new WrongAuctionOwnerException("You can only delete your own bid");
         }
 
         if (bidsForGivenOffer.size() == 1) {
@@ -98,12 +99,11 @@ public class BidServiceImpl implements BidService {
         bidding.removeBid(bidToDelete);
         auctionRepository.save(bidding);
         bidRepository.delete(bidToDelete);
-        return bidToDelete;
     }
 
     @Override
     public List<Bid> getBidsForAuction(Long auctionId) {
-        return null;
+        return bidRepository.findByBiddingAuctionId(auctionId);
     }
 
 

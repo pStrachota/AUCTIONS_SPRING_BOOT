@@ -46,7 +46,7 @@ class AuctionServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        auctionService = new AuctionServiceImpl(mockAuctionRepository, mockBidRepository);
+        auctionService = new AuctionServiceImpl(mockAuctionRepository, mockBidRepository, mockUserRepository);
     }
 
     @Test

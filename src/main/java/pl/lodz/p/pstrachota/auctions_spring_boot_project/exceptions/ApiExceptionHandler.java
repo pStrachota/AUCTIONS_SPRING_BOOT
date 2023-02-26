@@ -41,6 +41,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 request);
     }
 
+    @ExceptionHandler(WrongAuctionOwnerException.class)
+    public final ResponseEntity<Object> handleWrongAuctionOwnerExceptionException(WrongAuctionOwnerException ex,
+                                                                                  WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.FORBIDDEN,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
     @ExceptionHandler(IncorrectDateException.class)
     public final ResponseEntity<Object> handleIncorrectDateException(IncorrectDateException ex,
                                                                      WebRequest request) {

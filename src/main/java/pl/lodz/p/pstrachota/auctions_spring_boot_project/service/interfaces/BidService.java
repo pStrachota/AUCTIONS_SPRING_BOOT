@@ -9,7 +9,7 @@ public interface BidService {
 
     Bid createBid(BidRequest bidRequest, Long auctionId, UserDetails userDetails);
 
-    Bid deleteBid(Long auctionId, Long bidId, UserDetails userDetails);
+    void deleteBid(Long auctionId, Long bidId, UserDetails userDetails);
 
     List<Bid> getBidsForAuction(Long auctionId);
 }

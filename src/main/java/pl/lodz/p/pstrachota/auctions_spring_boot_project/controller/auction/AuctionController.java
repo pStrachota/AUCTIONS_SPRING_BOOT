@@ -21,7 +21,6 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.AuctionUpda
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BiddingRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BuyNowRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.AuctionType;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.BuyNow;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.ItemCategory;
@@ -75,26 +74,35 @@ public class AuctionController {
         return auctionService.getAllAuctions(auctionSpec, pageNo, sortBy, sortDir);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Auction> getAuctionById(@PathVariable Long id) {
-        return new ResponseEntity<>(auctionService.getAuctionById(id), HttpStatus.OK);
+    @GetMapping("/{auctionId}")
+    public ResponseEntity<Auction> getAuctionById(@PathVariable Long auctionId) {
+        return new ResponseEntity<>(auctionService.getAuctionById(auctionId), HttpStatus.OK);
     }
 
 
     @Operation(summary = "Update auction info by id")
-    @PutMapping("/auctions/{id}")
+    @PutMapping("/{auctionId}")
     public ResponseEntity<Auction> updateAuction(@CurrentUser UserDetails userDetails,
                                                  @RequestBody @Valid AuctionUpdate auctionUpdate,
-                                                 @PathVariable Long id) {
-        return new ResponseEntity<>(auctionService.updateAuction(id, auctionUpdate, userDetails),
+                                                 @PathVariable Long auctionId) {
+        return new ResponseEntity<>(auctionService.updateAuction(auctionId, auctionUpdate, userDetails),
                 HttpStatus.OK);
     }
 
     @Operation(summary = "Delete auction by id")
-    @DeleteMapping("/auctions/{id}")
-    public ResponseEntity<Auction> deleteAuction(@CurrentUser UserDetails userDetails,
-                                                 @PathVariable Long id) {
-        return new ResponseEntity<>(auctionService.deleteAuction(id, userDetails), HttpStatus.OK);
+    @DeleteMapping("/{auctionId}")
+    public ResponseEntity<String> deleteAuction(@CurrentUser UserDetails userDetails,
+                                                 @PathVariable Long auctionId) {
+        auctionService.deleteAuction(auctionId, userDetails);
+        return ResponseEntity.ok("Auction deleted successfully!");
+    }
+
+    private enum AuctionType {
+
+        BUY_NOW,
+        BIDDING
     }
 
 }
+
+

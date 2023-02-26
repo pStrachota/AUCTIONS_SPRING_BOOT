@@ -27,22 +27,23 @@ public class BidController {
     private final BidService bidService;
 
     @Operation(summary = "Create new bid")
-    @PostMapping("/{id}/bids")
+    @PostMapping("/{auctionId}/bids")
     public ResponseEntity<Bid> createBid(@CurrentUser
-                                                 UserDetails userDetails, @PathVariable Long id,
+                                                 UserDetails userDetails, @PathVariable Long auctionId,
                                          @RequestBody @Valid BidRequest bidRequest) {
 
-        return new ResponseEntity<>(bidService.createBid(bidRequest, id, userDetails),
+        return new ResponseEntity<>(bidService.createBid(bidRequest, auctionId, userDetails),
                 HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete bid by id")
-    @DeleteMapping("/{id}/bids/{bidId}")
-    public ResponseEntity<Bid> deleteBid(@CurrentUser
-                                                 UserDetails userDetails, @PathVariable Long id,
+    @DeleteMapping("/{auctionId}/bids/{bidId}")
+    public ResponseEntity<String> deleteBid(@CurrentUser
+                                                 UserDetails userDetails, @PathVariable Long auctionId,
                                          @PathVariable Long bidId) {
 
-        return new ResponseEntity<>(bidService.deleteBid(id, bidId, userDetails), HttpStatus.OK);
+        bidService.deleteBid(auctionId, bidId, userDetails);
+        return ResponseEntity.ok("Bid deleted successfully");
     }
 
     @GetMapping("/{auctionId}/bids")

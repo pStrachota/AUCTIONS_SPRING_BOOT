@@ -22,6 +22,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDat
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOperationException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.WrongAuctionOwnerException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
@@ -78,12 +79,12 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     @CacheEvict(value = "auctions", key = "#id")
-    public Auction deleteAuction(Long id, UserDetails userDetails) {
+    public void deleteAuction(Long id, UserDetails userDetails) {
         Auction auctionToDelete = auctionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Offer with id " + id + " not found"));
 
         if (!auctionToDelete.getUser().getUsername().equals(userDetails.getUsername())) {
-            throw new IncorrectOperationException("Cannot delete auction that is not yours");
+            throw new WrongAuctionOwnerException("Cannot delete auction that is not yours");
         }
 
         if (auctionToDelete.getAuctionEndTime().isBefore(LocalDateTime.now())) {
@@ -95,7 +96,6 @@ public class AuctionServiceImpl implements AuctionService {
             throw new IncorrectOperationException("Cannot delete auction with bids");
         }
         auctionRepository.deleteById(id);
-        return auctionToDelete;
     }
 
     @Override
