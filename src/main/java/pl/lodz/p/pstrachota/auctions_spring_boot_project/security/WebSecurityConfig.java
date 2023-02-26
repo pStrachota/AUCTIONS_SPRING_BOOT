@@ -39,11 +39,31 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/change-password")
                         .hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/users/{userId}").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/auctions")
+                        .hasAnyRole("ADMIN", "USER", "GUEST")
+                        .requestMatchers(HttpMethod.POST, "/auctions/buy-now")
+                        .hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/auctions/bidding")
+                        .hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/auctions/{auctionId}")
+                        .hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/auctions/{auctionId}")
+                        .hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/auctions/{auctionId}")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/auctions/{auctionId}/bids")
+                        .hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/{auctionId}/bids/{bidId}")
+                        .hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.GET, "/{auctionId}/bids")
+                        .hasRole("ADMIN")
 
                         .anyRequest().authenticated())
                 .authenticationProvider(daoAuthenticationProvider())
