@@ -1,11 +1,11 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.model;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 
 @Entity
@@ -24,7 +26,16 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 public class RefreshToken extends AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sequence-generator")
+    @GenericGenerator(
+            name = "refresh-token-sequence-generator",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @Parameter(name = "sequence_name", value = "refresh_token_sequence"),
+                    @Parameter(name = "initial_value", value = "1"),
+                    @Parameter(name = "increment_size", value = "1")
+            }
+    )
     private Long refreshTokenId;
 
     @OneToOne

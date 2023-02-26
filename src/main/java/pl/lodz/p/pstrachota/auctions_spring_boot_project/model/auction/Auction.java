@@ -5,6 +5,8 @@ import static pl.lodz.p.pstrachota.auctions_spring_boot_project.service.properti
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,9 +17,7 @@ import javax.persistence.Convert;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -27,6 +27,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AbstractEntity;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.ItemCategoryConverter;
@@ -45,7 +47,16 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.Pric
 public class Auction extends AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sequence-generator")
+    @GenericGenerator(
+            name = "auction-sequence-generator",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @Parameter(name = "sequence_name", value = "auction_sequence"),
+                    @Parameter(name = "initial_value", value = "7"),
+                    @Parameter(name = "increment_size", value = "1")
+            }
+    )
     private Long auctionId;
 
     @Column(name = "auction_type", insertable = false, updatable = false)
