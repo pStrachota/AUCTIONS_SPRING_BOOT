@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Auction;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.UserRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.AuctionService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionDtoMapper;
 
@@ -34,6 +38,7 @@ public class AuctionServiceImpl implements AuctionService {
     private static final int PAGE_SIZE = 20;
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
+    private final UserRepository userRepository;
 
     public Auction createAuction(AuctionRequest auctionRequest, UserDetails userDetails) {
 
@@ -72,6 +77,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @CacheEvict(value = "auctions", key = "#id")
     public Auction deleteAuction(Long id, UserDetails userDetails) {
         Auction auctionToDelete = auctionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Offer with id " + id + " not found"));
@@ -93,6 +99,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @CachePut(value = "auctions", key = "#id")
     public Auction updateAuction(Long id, AuctionUpdate auctionUpdate, UserDetails userDetails) {
         Auction auctionToUpdate = auctionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Auction with id " + id + " not found"));
@@ -108,6 +115,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @Cacheable(value = "auctions", key = "#id")
     public Auction getAuctionById(Long id) {
         return auctionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Auction with id " + id + " not found"));

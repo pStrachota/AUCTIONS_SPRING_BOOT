@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  auctions-mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: auctions-mssql
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      - MSSQL_SA_PASSWORD=9R%49Zf41Ov2
+      - ACCEPT_EULA=Y
