@@ -1,6 +1,7 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller.auction;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.BidS
 @RestController
 @RequestMapping("/auctions")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class BidController {
 
     private final BidService bidService;
@@ -47,6 +49,7 @@ public class BidController {
     }
 
     @GetMapping("/{auctionId}/bids")
+    @Operation(summary = "Get all bids for auction (only for admin)")
     public ResponseEntity<List<Bid>> getBidsForAuction(@PathVariable Long auctionId) {
         return new ResponseEntity<>(bidService.getBidsForAuction(auctionId), HttpStatus.OK);
     }

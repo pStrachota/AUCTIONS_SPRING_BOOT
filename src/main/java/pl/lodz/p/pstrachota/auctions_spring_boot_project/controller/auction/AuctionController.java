@@ -2,6 +2,7 @@ package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller.auction;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.specArgResAnnot
 @RestController
 @RequestMapping("/auctions")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class AuctionController {
 
     private final AuctionService auctionService;
@@ -56,7 +58,7 @@ public class AuctionController {
     }
 
     @Operation(summary = "Get all auctions")
-    @GetMapping("/auctions")
+    @GetMapping()
     public List<Auction> getAllAuctions(
             @RequestParam(value = "descr", required = false) String description,
             @RequestParam(value = "itemCategory", required = false) ItemCategory itemCategory,
@@ -75,6 +77,7 @@ public class AuctionController {
     }
 
     @GetMapping("/{auctionId}")
+    @Operation(summary = "Get auction by id")
     public ResponseEntity<Auction> getAuctionById(@PathVariable Long auctionId) {
         return new ResponseEntity<>(auctionService.getAuctionById(auctionId), HttpStatus.OK);
     }

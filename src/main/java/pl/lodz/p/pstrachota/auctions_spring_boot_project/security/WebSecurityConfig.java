@@ -45,7 +45,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/users/{userId}").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/auctions")
-                        .hasAnyRole("ADMIN", "USER", "GUEST")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/auctions/buy-now")
                         .hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/auctions/bidding")

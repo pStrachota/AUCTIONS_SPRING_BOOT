@@ -152,15 +152,4 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
     }
 
-    @ExceptionHandler(IncorrectAuctionTypeException.class)
-    public final ResponseEntity<Object> handleIncorrectAuctionTypeException(
-            IncorrectAuctionTypeException ex,
-            WebRequest request) {
-        ApiException apiException =
-                new ApiException(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST,
-                        List.of(request.getDescription(false)), LocalDateTime.now());
-
-        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
-    }
-
 }

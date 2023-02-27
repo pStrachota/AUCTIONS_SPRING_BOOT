@@ -1,5 +1,7 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,7 @@ public class AuthController {
     final JwtUtils jwtUtils;
 
     @PostMapping("/signin")
+    @Operation(summary = "Sign in to the application")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -70,6 +73,8 @@ public class AuthController {
     }
 
     @PostMapping("/refreshToken")
+    @Operation(summary = "Refresh token")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> refreshToken(
             @Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
 
@@ -86,6 +91,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @Operation(summary = "Sign up to the application")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SingUpRequest singupRequest) {
 
         if (userService.existsByUsername(singupRequest.getUsername())) {
@@ -103,6 +109,6 @@ public class AuthController {
 
         user.setRoleName(RoleEnum.ROLE_USER);
         userService.createUser(user);
-        return ResponseEntity.ok("User registered successfully!");
+        return ResponseEntity.status(201).body("User registered successfully!");
     }
 }

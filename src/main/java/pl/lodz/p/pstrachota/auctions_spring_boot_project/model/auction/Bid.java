@@ -33,7 +33,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.validators.Pric
 public class Bid extends AbstractEntity {
 
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "bid-sequence-generator")
     @GenericGenerator(
             name = "bid-sequence-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",

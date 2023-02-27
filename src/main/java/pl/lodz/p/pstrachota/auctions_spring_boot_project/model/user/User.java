@@ -31,7 +31,7 @@ import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.converter.RoleE
 public class User extends AbstractEntity {
 
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "user-sequence-generator")
     @GenericGenerator(
             name = "user-sequence-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
