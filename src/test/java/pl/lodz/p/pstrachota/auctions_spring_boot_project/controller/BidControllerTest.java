@@ -1,87 +1,119 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static org.hamcrest.Matchers.equalTo;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.relatedOfferId;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testBidRequestCorrectParams;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testBidRequestIncorrectPrice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl.BidServiceImpl;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.BidDtoMapper;
 
-@WebMvcTest(BidController.class)
-class BidControllerTest {
+class BidControllerTest extends BaseTest {
 
     @Autowired
     MockMvc mockMvc;
+
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
-    BidServiceImpl bidServiceImpl;
+    @BeforeEach
+    void setup() {
+        RestAssuredMockMvc.mockMvc(mockMvc);
+        RestAssuredMockMvc.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
 
-    private long relatedOfferId = 1L;
 
     @Test
-    void createBid_when_parameters_are_correct() throws Exception {
+    @WithUserDetails
+    void createBid_when_parameters_are_correct() {
 
-        when(bidServiceImpl.createBid(any(BidRequest.class), anyLong()))
-                .thenReturn(BidDtoMapper.mapToBid(testBidRequestCorrectParams, relatedOfferId));
+        given().body(testBidRequestCorrectParams)
+                .contentType("application/json")
+                .when()
+                .post("/auctions/{id}/bids", relatedOfferId)
+                .then()
+                .statusCode(201)
+                .contentType("application/json")
+                .body("bidId", equalTo(1))
+                .body("bidPrice", equalTo(100.0F));
+    }
 
-        mockMvc.perform(
-                post("/auctions/{id}/bids", relatedOfferId)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(testBidRequestCorrectParams))
-        ).andExpect(status().isCreated())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.id").value(0L))
-                .andExpect(jsonPath("$.relatedOfferId").value(relatedOfferId))
-                .andExpect(jsonPath("$.bidPrice").value(20.0));
+
+    @Test
+    @WithUserDetails("user3")
+    void should_delete_user_bid() {
+
+        given()
+                .when()
+                .delete("/auctions/{id}/bids/{bidId}", relatedOfferId, 2L)
+                .then()
+                .statusCode(200);
     }
 
     @Test
-    void createBid_when_bidPrice_is_less_than_zero() throws Exception {
+    @WithUserDetails("adminUser")
+    void should_return_all_bid_when_user_id_admin() {
 
-        when(bidServiceImpl.createBid(any(BidRequest.class), anyLong()))
-                .thenThrow(new IncorrectPriceException("Min price cannot be negative"));
-
-        mockMvc.perform(
-                post("/auctions/{id}/bids", relatedOfferId)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(testBidRequestCorrectParams))
-        ).andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.httpStatus").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.exceptionMessage").value("Min price cannot be negative"));
+        given()
+                .when()
+                .get("/auctions/{id}/bids", relatedOfferId)
+                .then()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("size()", equalTo(2))
+                .body("[0].bidId", equalTo(1))
+                .body("[0].bidPrice", equalTo(50.0F))
+                .body("[1].bidId", equalTo(2))
+                .body("[1].bidPrice", equalTo(60.0F));
 
     }
 
     @Test
-    void createBid_when_auction_has_ended() throws Exception {
+    @WithUserDetails()
+    void should_not_delete_bid_that_user_not_created() {
 
-        when(bidServiceImpl.createBid(any(BidRequest.class), anyLong()))
-                .thenThrow(new IncorrectDateException("Auction has ended"));
+        given()
+                .when()
+                .delete("/auctions/{id}/bids/{bidId}", relatedOfferId, 2L)
+                .then()
+                .statusCode(403)
+                .contentType("application/json")
+                .body("exceptionMessage", equalTo("You can only delete your own bid"));
+
+    }
+
+    @Test
+    void should_not_create_bid_when_user_is_not_authenticated() {
+
+        given().body(testBidRequestCorrectParams)
+                .contentType("application/json")
+                .when()
+                .post("/auctions/{id}/bids", relatedOfferId)
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    @WithUserDetails
+    void should_not_create_bid_when_bidPrice_is_less_than_zero() {
 
 
-        mockMvc.perform(
-                post("/auctions/{id}/bids", relatedOfferId)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(testBidRequestCorrectParams))
-        ).andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.httpStatus").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.exceptionMessage")
-                        .value("Auction has ended"));
+        given().body(testBidRequestIncorrectPrice)
+                .contentType("application/json")
+                .when()
+                .post("/auctions/{auctionId}/bids", relatedOfferId)
+                .then()
+                .statusCode(400)
+                .contentType("application/json")
+                .body("httpStatus", equalTo("BAD_REQUEST"))
+                .body("errors[0]",
+                        equalTo("bidPrice: Price must be greater than 0 and less than 1000000"));
 
     }
 }

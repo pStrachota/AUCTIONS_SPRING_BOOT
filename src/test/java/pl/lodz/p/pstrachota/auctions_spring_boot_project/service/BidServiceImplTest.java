@@ -4,11 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testAuctionRequestCorrectParamsBidding;
-import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testAuctionRequestCorrectParamsBuyNow;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testAuctionRequestIncorrectEndTime;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testBidRequestCorrectParams;
 import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testBidRequestIncorrectPrice;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testBiddingDtoCorrectParams;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testBuyNowDtoCorrectParamsBuyNow;
+import static pl.lodz.p.pstrachota.auctions_spring_boot_project.dataForTests.DataForTests.testUserDetails;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
@@ -20,12 +21,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.events.MailSenderPublisher;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectAuctionTypeException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bid;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.UserRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl.BidServiceImpl;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.BidService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.AuctionDtoMapper;
@@ -41,6 +42,8 @@ class BidServiceImplTest {
     @Mock
     BidRepository mockBidRepository;
     @Mock
+    UserRepository mockUserRepository;
+    @Mock
     AuctionRepository mockAuctionRepository;
     @Mock
     MailSenderPublisher mockMailSenderPublisher;
@@ -50,20 +53,7 @@ class BidServiceImplTest {
     @BeforeEach
     void setUp() {
         bidService = new BidServiceImpl(mockBidRepository, mockAuctionRepository,
-                mockMailSenderPublisher);
-    }
-
-    @Test
-    void should_throw_incorrect_auction_type_ex_when_auction_is_not_bidding() {
-
-        when(mockAuctionRepository.findById(1L)).thenReturn(
-                Optional.of(AuctionDtoMapper.mapAuctionRequestToAuction(
-                        testAuctionRequestCorrectParamsBuyNow)));
-
-        assertThatThrownBy(() -> bidService.createBid(testBidRequestCorrectParams, 1L))
-                .isInstanceOf(IncorrectAuctionTypeException.class)
-                .hasMessage("Cannot bid on buy now auction");
-
+                mockMailSenderPublisher, mockUserRepository);
     }
 
     @Test
@@ -71,9 +61,12 @@ class BidServiceImplTest {
 
         when(mockAuctionRepository.findById(1L)).thenReturn(
                 Optional.of(AuctionDtoMapper.mapAuctionRequestToAuction(
-                        testAuctionRequestCorrectParamsBidding)));
+                        testBiddingDtoCorrectParams)));
+        when(mockUserRepository.findByUsername(testUserDetails.getUsername())).thenReturn(
+                Optional.of(testUserDetails.getUser()));
 
-        assertThatThrownBy(() -> bidService.createBid(testBidRequestIncorrectPrice, 1L))
+        assertThatThrownBy(
+                () -> bidService.createBid(testBidRequestIncorrectPrice, 1L, testUserDetails))
                 .isInstanceOf(IncorrectPriceException.class)
                 .hasMessage("Bid price must be greater than offer price");
 
@@ -86,7 +79,12 @@ class BidServiceImplTest {
                 Optional.of(AuctionDtoMapper.mapAuctionRequestToAuction(
                         testAuctionRequestIncorrectEndTime)));
 
-        assertThatThrownBy(() -> bidService.createBid(testBidRequestCorrectParams, 1L))
+
+        when(mockUserRepository.findByUsername(testUserDetails.getUsername())).thenReturn(
+                Optional.of(testUserDetails.getUser()));
+
+        assertThatThrownBy(
+                () -> bidService.createBid(testBidRequestCorrectParams, 1L, testUserDetails))
                 .isInstanceOf(IncorrectDateException.class)
                 .hasMessage("Auction has ended");
 
@@ -95,15 +93,14 @@ class BidServiceImplTest {
     @Test
     void should_create_bid_when_params_are_correct() {
 
-        //given
-        Bid expectedBid = BidDtoMapper.mapToBid(testBidRequestCorrectParams, 1L);
-        //when
+        Bid expectedBid = BidDtoMapper.mapToBid(testBidRequestCorrectParams);
+
         when(mockAuctionRepository.findById(1L)).thenReturn(
                 Optional.of(AuctionDtoMapper.mapAuctionRequestToAuction(
-                        testAuctionRequestCorrectParamsBidding)));
+                        testBuyNowDtoCorrectParamsBuyNow)));
         when(mockBidRepository.save(any(Bid.class))).thenReturn(expectedBid);
-        Bid actualBid = bidService.createBid(testBidRequestCorrectParams, 1L);
-        //then
+        Bid actualBid = bidService.createBid(testBidRequestCorrectParams, 1L, testUserDetails);
+
         assertThat(expectedBid).isEqualTo(actualBid);
 
 

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -20,7 +22,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status,
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
 
         List<String> errors = new ArrayList<>();
@@ -38,6 +40,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, apiException, headers, apiException.getHttpStatus(),
                 request);
     }
+
+    @ExceptionHandler(WrongAuctionOwnerException.class)
+    public final ResponseEntity<Object> handleWrongAuctionOwnerExceptionException(WrongAuctionOwnerException ex,
+                                                                                  WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.FORBIDDEN,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
     @ExceptionHandler(IncorrectDateException.class)
     public final ResponseEntity<Object> handleIncorrectDateException(IncorrectDateException ex,
                                                                      WebRequest request) {
@@ -50,7 +63,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public final ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex,
-                                                                     WebRequest request) {
+                                                                       WebRequest request) {
         ApiException apiException =
                 new ApiException(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST,
                         List.of(request.getDescription(false)), LocalDateTime.now());
@@ -60,10 +73,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
-            HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status,
+            HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
-        return new ResponseEntity<>(new ApiException(ex.getLocalizedMessage(), HttpStatus.METHOD_NOT_ALLOWED,
-                List.of(request.getDescription(false)), LocalDateTime.now()), new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.METHOD_NOT_ALLOWED,
+                        List.of(request.getDescription(false)), LocalDateTime.now()),
+                new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(NumberFormatException.class)
@@ -71,6 +86,36 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                     WebRequest request) {
         ApiException apiException =
                 new ApiException(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex,
+                                                                WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.UNAUTHORIZED,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
+    @ExceptionHandler(DuplicatedEmailException.class)
+    public final ResponseEntity<Object> handleDuplicatedEmailException(DuplicatedEmailException ex,
+                                                                       WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.CONFLICT,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
+    @ExceptionHandler(DuplicatedLoginException.class)
+    public final ResponseEntity<Object> handleDuplicatedLoginException(DuplicatedLoginException ex,
+                                                                       WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.CONFLICT,
                         List.of(request.getDescription(false)), LocalDateTime.now());
 
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
@@ -87,8 +132,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(IncorrectOperationException.class)
-    public final ResponseEntity<Object> handleIncorrectOperationException(IncorrectOperationException ex,
-                                                                          WebRequest request) {
+    public final ResponseEntity<Object> handleIncorrectOperationException(
+            IncorrectOperationException ex,
+            WebRequest request) {
         ApiException apiException =
                 new ApiException(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST,
                         List.of(request.getDescription(false)), LocalDateTime.now());
@@ -101,16 +147,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                 WebRequest request) {
         ApiException apiException =
                 new ApiException(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND,
-                        List.of(request.getDescription(false)), LocalDateTime.now());
-
-        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
-    }
-
-    @ExceptionHandler(IncorrectAuctionTypeException.class)
-    public final ResponseEntity<Object> handleIncorrectAuctionTypeException(IncorrectAuctionTypeException ex,
-                                                                            WebRequest request) {
-        ApiException apiException =
-                new ApiException(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST,
                         List.of(request.getDescription(false)), LocalDateTime.now());
 
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());

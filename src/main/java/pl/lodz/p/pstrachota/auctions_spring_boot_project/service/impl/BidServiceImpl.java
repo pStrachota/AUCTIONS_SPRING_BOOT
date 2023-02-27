@@ -1,25 +1,26 @@
 package pl.lodz.p.pstrachota.auctions_spring_boot_project.service.impl;
 
-import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.BidRequest;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.dto.auction.BidRequest;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.events.MailSenderPublisher;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectAuctionTypeException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectDateException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectOperationException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.IncorrectPriceException;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.NotFoundException;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Auction;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.AuctionType;
-import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.Bid;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.exceptions.WrongAuctionOwnerException;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bid;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.auction.Bidding;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.model.user.User;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.AuctionRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.BidRepository;
+import pl.lodz.p.pstrachota.auctions_spring_boot_project.repository.UserRepository;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.interfaces.BidService;
 import pl.lodz.p.pstrachota.auctions_spring_boot_project.service.mapper.BidDtoMapper;
 
@@ -31,72 +32,78 @@ public class BidServiceImpl implements BidService {
     private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
     private final MailSenderPublisher mailSenderPublisher;
+    private final UserRepository userRepository;
 
-    public Bid createBid(BidRequest bidRequest, Long auctionId) {
-        Bid bid = BidDtoMapper.mapToBid(bidRequest, auctionId);
-        long relatedOfferId = bid.getRelatedOfferId();
-
-        Bid savedBid = null;
-
-        Auction auction = auctionRepository.findById(relatedOfferId).orElseThrow(
+    public Bid createBid(BidRequest bidRequest, Long auctionId, UserDetails userDetails) {
+        Bidding bidding = (Bidding) auctionRepository.findById(auctionId).orElseThrow(
                 () -> new NotFoundException(
-                        "Offer with id " + relatedOfferId + " not found"));
+                        "Auction with id " + auctionId + " not found"));
+        Bid bid = BidDtoMapper.mapToBid(bidRequest);
 
-        if (auction.getAuctionType().equals(AuctionType.BUY_NOW)) {
-            throw new IncorrectAuctionTypeException("Cannot bid on buy now auction");
-        }
-        if (bid.getBidPrice().compareTo(auction.getCurrentPrice()) <= 0) {
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new NotFoundException(
+                        "User with username " + userDetails.getUsername() + " not found"));
+        bid.setUser(user);
+
+        if (bid.getBidPrice().compareTo(bidding.getCurrentPrice()) <= 0) {
             throw new IncorrectPriceException("Bid price must be greater than offer price");
         }
-        if (LocalDateTime.now().isAfter(auction.getAuctionEndTime())) {
+        if (LocalDateTime.now().isAfter(bidding.getAuctionEndTime())) {
             throw new IncorrectDateException("Auction has ended");
         }
 
-        auction.setCurrentPrice(bid.getBidPrice());
-        auction.setAuctionType(AuctionType.BIDDING);
-        auctionRepository.save(auction);
-        savedBid = bidRepository.save(bid);
+        bidding.setCurrentPrice(bid.getBidPrice());
+        bidding.addBid(bid);
+        auctionRepository.save(bidding);
 
-
-        List<Bid> bidsForGivenOffer = bidRepository.findByRelatedOfferId(relatedOfferId);
+        List<Bid> bidsForGivenOffer = bidding.getBids();
         List<String> emailBids =
-                bidsForGivenOffer.stream().map(Bid::getEmail).collect(Collectors.toList());
-        mailSenderPublisher.publishNewBid(emailBids, relatedOfferId, bid.getBidPrice());
-        return savedBid;
+                bidsForGivenOffer.stream().map(b -> b.getUser().getEmail())
+                        .collect(Collectors.toList());
+        mailSenderPublisher.publishNewBid(emailBids, auctionId, bid.getBidPrice());
+        return bidding.getBids().get(bidding.getBids().size() - 1);
     }
 
     @Override
-    public Bid deleteBid(Long auctionId, Long bidId) {
+    public void deleteBid(Long auctionId, Long bidId, UserDetails userDetails) {
 
         Bid bidToDelete = bidRepository.findById(bidId).orElseThrow(
                 () -> new NotFoundException("Bid with id " + bidId + " not found"));
-        List<Bid> bidsForGivenOffer = bidRepository.findByRelatedOfferId(auctionId);
+
+        Bidding bidding = (Bidding) auctionRepository.findById(auctionId).orElseThrow(
+                () -> new NotFoundException("Auction with id " + auctionId + " not found"));
+
+        List<Bid> bidsForGivenOffer = bidding.getBids();
         Bid highestPriceBid =
                 bidsForGivenOffer.stream().max(Comparator.comparing(Bid::getBidPrice)).get();
 
-        if (!bidToDelete.getEmail().equals(highestPriceBid.getEmail())) {
-            throw new IncorrectOperationException("You can only delete your own bid");
-        }
-
-        if (highestPriceBid.getId() != bidId) {
+        if (!highestPriceBid.getBidId().equals(bidId)) {
             throw new IncorrectOperationException("You can only delete bid with highest price");
         }
 
-        Auction auctionToChangePrice = auctionRepository.findById(auctionId).orElseThrow(
-                () -> new NotFoundException("Auction with id " + auctionId + " not found"));
+        if (!bidToDelete.getUser().getUsername().equals(userDetails.getUsername())) {
+            throw new WrongAuctionOwnerException("You can only delete your own bid");
+        }
 
         if (bidsForGivenOffer.size() == 1) {
-            auctionToChangePrice.setCurrentPrice(auctionToChangePrice.getStartingPrice());
+            bidding.setCurrentPrice(bidding.getStartingPrice());
         } else {
-            auctionToChangePrice.setCurrentPrice(highestPriceBid.getBidPrice());
+            bidding.setCurrentPrice(highestPriceBid.getBidPrice());
         }
 
         List<String> emailBids =
-                bidsForGivenOffer.stream().map(Bid::getEmail).collect(Collectors.toList());
+                bidsForGivenOffer.stream().map(b -> b.getUser().getEmail())
+                        .collect(Collectors.toList());
 
         mailSenderPublisher.publishDeletedBid(emailBids, auctionId, highestPriceBid.getBidPrice());
+        bidding.removeBid(bidToDelete);
+        auctionRepository.save(bidding);
         bidRepository.delete(bidToDelete);
-        return bidToDelete;
+    }
+
+    @Override
+    public List<Bid> getBidsForAuction(Long auctionId) {
+        return bidRepository.findByBiddingAuctionId(auctionId);
     }
 
 
